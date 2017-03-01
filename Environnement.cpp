@@ -154,7 +154,7 @@ void Environnement::metabolism(){
 }
 
 /**
- * compute the diffusion of the organites through the grid
+ * computes the diffusion of the organites through the grid
  */
 void Environnement::diffusion(){
 	//grid browse
@@ -167,7 +167,7 @@ void Environnement::diffusion(){
 				for(int l=-1; l<2; l++){
 					int v=0;
 					int h=0;
-					//computing edge conditions
+					//computing edge conditions to obtain a toric grid
 					if(i+k>H_-1){
 						v=0;
 					}
@@ -288,21 +288,21 @@ void Environnement::run(int t){
 		if(i%(T_*10) == 0){
 			reset();
 		}
-		diffusion();
+		//diffusion();
 		death();
 		competition();
-		//metabolism();
+		metabolism();
 		show();
-		/*cout << grille[1][1].organites()[0] << ' ' << grille[1][1].organites()[1]  << ' ' << grille[1][1].organites()[2]  << endl;
+		cout << grille[1][1].organites()[0] << ' ' << grille[1][1].organites()[1]  << ' ' << grille[1][1].organites()[2]  << endl;
 		cout << grille[1][1].phen()[0] << ' ' << grille[1][1].phen()[1]  << ' ' << grille[1][1].phen()[2]  << endl;
-		*/
+		
 		float sum = 0;
 		for (int i=0; i<H_; i++){
 			for(int j=0; j<W_; j++){
 				sum+=grille[1][1].organites()[0];
 			}
 		}
-		cout << "somme : " << sum << endl;
+		cout << "somme de A : " << sum << endl;
 		cout << ' ' << endl;
 	}
 	//show();

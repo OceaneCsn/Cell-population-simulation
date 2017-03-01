@@ -69,7 +69,7 @@ int main(int argc, char const *argv[])
 	env.competition();
 	env.show();*/
 	
-	env.run(1);
+	env.run(5);
 	
   return 0;
 }

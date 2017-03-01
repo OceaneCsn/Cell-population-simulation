@@ -47,6 +47,9 @@ float CellB::metabolism(float b_out){
  * fitness getter, taking the minimum fitness in account
  */
 float CellB::fitness(){
-	return phen_[1];
+	if(phen_[2]>W_min_){
+		return phen_[2];
+	}
+	return 0;
 }
 
