@@ -4,12 +4,14 @@
 //==============================
 //    INCLUDES
 //==============================
+
 #include <cstdio>
 #include <cstdlib>
 #include <vector>
 #include "Cell.h"
 #include "CellA.h"
 #include "CellB.h" 
+
 /**
  * @class Case
  * @brief Creates a Case
@@ -17,28 +19,36 @@
 
 class Case
 {
+
 public:
+
 //==============================
 //    CONSTRUCTORS
 //==============================
-  Case();
-  Case(vector <float> organites, char c);
+
+Case();
+Case(vector <float> organites, char c);
+
 //==============================
 //    DESTRUCTOR
 //==============================
-  ~Case();
+~Case();
 
 //==============================
 //    GETTERS
 //==============================
 
 vector <float> organites();
+vector <float> phen();
+
  
 //==============================
 //    SETTERS
 //==============================
 void set_cell(char c);
+void set_cell(char c, vector <float> conc);
 void set_organites( vector <float> org );
+
 //==============================
 //    OPERATORS
 //==============================
@@ -47,36 +57,22 @@ void set_organites( vector <float> org );
 //    PUBLIC METHODS
 //==============================
   
-  void reset(float Ainit);
-  int containsA();
-  void death();
-  void metabolism();
-
+void reset(float Ainit);
+int containsA();
+void death();
+void metabolism();
+int isEmpty();
+vector <float> division();
+float fitness();
   
 protected:
 
 //==============================
-//    PROTECTED METHODS
-//==============================
-
-//==============================
 //    ATTRIBUTES
 //==============================
+
 vector<float> organites_;
 Cell * cell_;
 };
-
-//==============================
-//    GETTER DEFINITION
-//==============================
-
-//==============================
-//    SETTER DEFINITION
-//==============================
-
-//==============================
-//    OPERATOR DEFINITION
-//==============================
-
 
 #endif // CASE_H

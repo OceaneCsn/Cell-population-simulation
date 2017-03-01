@@ -1,6 +1,7 @@
 //==============================
 //    INCLUDES
 //==============================
+
 #include "Case.h"
 #include "Cell.h"
 #include "CellA.h"
@@ -8,19 +9,22 @@
 #include <cstdio>
 #include <cstdlib>
 #include <vector>
-//using namespace std;
-//==============================
-//    DEFINITION STATIC ATTRIBUTES
-//==============================
 
 //==============================
 //    CONSTRUCTORS
 //==============================
+
+/**
+ * default constructor
+ */
 Case::Case(){
 	organites_= {0.,0.,0.};
 	cell_= nullptr;
 }
 
+/**
+ * constructor with genotype and phenotype
+ */
 Case::Case(vector <float> organites, char c){
   if (c=='a'){
     cell_ = new CellA();}
@@ -33,9 +37,10 @@ Case::Case(vector <float> organites, char c){
 //    GETTERS
 //==============================
 
-
+/**
+ * returns organites present in the case
+ */
 vector <float> Case::organites(){
-	
 	return organites_;
 }
 
@@ -43,6 +48,9 @@ vector <float> Case::organites(){
 //    SETTERS
 //==============================
 
+/**
+ * adds a cell with given genotype in a case
+ */
 void Case::set_cell(char c){
 	if (c=='a'){
 		cell_ = new CellA();}
@@ -50,14 +58,29 @@ void Case::set_cell(char c){
 		cell_ = new CellB();}
 }
 
+/**
+ * sets the organites present in the case
+ */
 void Case::set_organites(vector <float> org){
 	for (int i=0; i<3; i++){
 		organites_[i]=org[i];
 	}
 }
-	
-		
-	
+
+/**
+ * sets the caracteristics of the cell in the case
+ */
+void Case::set_cell(char c, vector <float> conc){
+	if(c=='a'){
+		cell_=new CellA();
+		cell_->set_phen(conc);
+	}
+	else{
+		cell_=new CellB();
+		cell_->set_phen(conc);
+	}
+}
+
 	
 //==============================
 //    DESTRUCTOR
@@ -66,17 +89,23 @@ void Case::set_organites(vector <float> org){
 Case::~Case(){
 	if(cell_!= nullptr){
 		//delete cell_;
-		
 	}
 }
 
 //==============================
 //    PUBLIC METHODS
 //==============================
+
+/**
+ * resets the metabolites to initial concentration
+ */
 void Case::reset(float Ainit){
 	organites_={Ainit,0.,0.};
 }
 
+/**
+ * returns 1 if the case contains a cell with genotype A, 0 for genotype B and -1 for lack of cell
+ */
 int Case::containsA(){
 	if(cell_ != NULL){
 		if(cell_->isA()==1){
@@ -89,6 +118,9 @@ int Case::containsA(){
 		}
 }
 
+/**
+ * Randomly kills cell in the case
+ */
 void Case::death(){
 	if(cell_){
 		float random = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
@@ -97,12 +129,14 @@ void Case::death(){
 			for (int i=0; i<3; i++){
 				organites_[i]+=conc[i];
 			}
-			
 			cell_= nullptr;
 		}
 	}
 }
-			
+
+/**
+ * simulates metabolism of the cell in the case
+ */		
 void Case::metabolism(){
 	if(cell_){
 		if(containsA()==1){
@@ -113,7 +147,37 @@ void Case::metabolism(){
 		}
 	}
 }
-		
+
+/**
+ * returns 1 if the case is empty, 0 otherwise
+ */
+int Case::isEmpty(){
+	if(cell_==nullptr){
+		return 1;
+	}
+	return 0;
+}
+
+/**
+ * returns the divided cell next to an empty case
+ */
+vector <float> Case::division(){
+	return (*cell_).division();
+}
+
+/**
+ * returns fitness of the cell in the case
+ */
+float Case::fitness(){
+	return cell_->fitness();
+}
+
+/**
+ * returns phenotype of the cell in the case
+ */
+vector <float> Case::phen(){
+	return cell_->phen();
+}
 
 	
 	

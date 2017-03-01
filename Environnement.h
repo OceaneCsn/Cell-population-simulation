@@ -12,28 +12,21 @@
 #include "Case.h"
 class Environnement
 {
+
 public:
+
 //==============================
 //    CONSTRUCTORS
 //==============================
- Environnement();
- Environnement(float Ainit,int T,float D);
- 
-//==============================
-//    DESTRUCTOR
-//==============================
-  
+
+Environnement();
+Environnement(float Ainit,int T,float D);
+   
 //==============================
 //    GETTERS
 //==============================
-Case get_case(int i, int j);
-//==============================
-//    SETTERS
-//==============================
 
-//==============================
-//    OPERATORS
-//==============================
+Case get_case(int i, int j);
   
 //==============================
 //    PUBLIC METHODS
@@ -44,35 +37,23 @@ Case get_case(int i, int j);
  void death();
  void metabolism();
  void diffusion();
+ void competition();
+ void run(int t);
 
 protected:
-//==============================
-//    PROTECTED METHODS
-//==============================
 
 //==============================
 //    ATTRIBUTES
 //==============================
+
 float Ainit_; //glucose initial concentration
 int W_; //width
 int H_; //height
 int T_ ; //frequence of grid cleaning
 float D_; //diffusion
+float P_mut_;
 Case** grille;
 };
-//==============================
-//    GETTER DEFINITION
-//==============================
-
-
-//==============================
-//    SETTER DEFINITION
-//==============================
-
-//==============================
-//    OPERATOR DEFINITION
-//==============================
-
 
 #endif // ENVIRONNEMENT_H
 

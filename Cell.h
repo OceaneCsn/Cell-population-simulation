@@ -4,7 +4,9 @@
 //==============================
 //    INCLUDES
 //==============================
+
 #include <vector>
+
 using namespace std;
 
 /**
@@ -14,32 +16,33 @@ using namespace std;
 
 class Cell
 {
+
 public:
 
 //==============================
 //    CONSTRUCTORS
 //==============================
   
-  Cell();
-  Cell(float pmut);
+Cell();
 
 //==============================
 //    DESTRUCTOR
 //==============================
- virtual ~Cell(){};
+
+virtual ~Cell(){};
 
 //==============================
 //    GETTER DEFINITION
 //==============================
 
- vector<float> phen();
+virtual float fitness()=0;
+vector<float> phen();
+
 //==============================
 //    SETTERS
 //==============================
 
-//==============================
-//    OPERATORS
-//==============================
+void set_phen(vector<float> conc);
 
 //==============================
 //    PUBLIC METHODS
@@ -47,34 +50,24 @@ public:
 
 virtual int isA() = 0;
 virtual float metabolism(float out) = 0;
+vector <float> division();
+
 //==============================
 //    ATTRIBUTE
 //==============================
+
 float P_death_; //probability of death at each step of time
 
-
 protected:
-//==============================
-//    PROTECTED METHODS
-//==============================
 
 //==============================
 //    ATTRIBUTES
 //==============================
   
-  float W_min_; //minimal fitness
-  float P_mut_; //probability of mutation when the cell is dividing
-  vector<float> phen_; //phenotype : concentration in organites A, B and C
+float W_min_; //minimal fitness
+float P_mut_; //probability of mutation when the cell is dividing
+vector<float> phen_; //phenotype : concentration in organites A, B and C
 };
-
-
-//==============================
-//    SETTER DEFINITION
-//==============================
-
-//==============================
-//    OPERATOR DEFINITION
-//==============================
 
 
 #endif // CELL_H
