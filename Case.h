@@ -38,6 +38,7 @@ vector <float> organites();
 //    SETTERS
 //==============================
 void set_cell(char c);
+void set_organites( vector <float> org );
 //==============================
 //    OPERATORS
 //==============================

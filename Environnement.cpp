@@ -6,6 +6,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <vector>
+
 using namespace std;
 //==============================
 //    DEFINITION STATIC ATTRIBUTES
@@ -46,7 +48,13 @@ Environnement::Environnement(float Ainit,int T,float D){
 //    DESTRUCTOR
 //==============================
 
+//==============================
+//    GETTERS
+//==============================
 
+Case Environnement::get_case(int i, int j){
+	return grille[i][j];
+}
 //==============================
 //    PUBLIC METHODS
 //==============================
@@ -94,6 +102,7 @@ void Environnement::filling(){
 void Environnement::show(){
 	for (int i=0; i<H_; i++){
 		for(int j=0; j<W_; j++){
+			
 			if(grille[i][j].containsA() == 1){
 				cout << 'a';
 			}
@@ -123,5 +132,69 @@ void Environnement::metabolism(){
 		}
 	}
 }
+
+void Environnement::diffusion(){
+	
+	//grid browse
+	for (int i=0; i<H_; i++){
+		for(int j=0; j<W_; j++){
+			
+			//vector of organites at time t
+			vector <float> oldvec = grille[i][j].organites();
+			
+			//browsing neighbourhood
+			for (int k=-1; k<2; k++){
+				for(int l=-1; l<2; l++){
+					
+					int v=0;
+					int h=0;
+					
+					//computing edge conditions
+					if(i+k>H_-1){
+						v=0;
+					}
+					else if(i+k<0){
+						v=H_-1;
+					}
+					else{
+						v=i+k;
+					}
+					
+					if(j+l>W_-1){
+						h=0;
+					}
+					else if(j+l<0){
+						h=W_-1;
+					}
+					else{
+						h=j+l;
+					}
+					
+					//acquiring organites from neighbouring cells in a new vector 
+					vector <float> newvec = grille[i][j].organites();
+					
+					for(int m=0; m<3; m++){
+						
+						newvec[m]+=D_*grille[v][h].organites()[m];
+					}
+					
+					grille[i][j].set_organites(newvec);
+				}
+			}
+			
+			//losing organites to neighbouring cells
+			vector <float> newvec2 = grille[i][j].organites();
+			for(int m=0; m<3; m++){
+				newvec2[m]-=9*D_*oldvec[m];
+			}
+			//final vector at time t+1
+			grille[i][j].set_organites(newvec2);
+			
+		}
+	}
+}
+			
+			
+			
 			
 	

@@ -26,7 +26,7 @@ public:
 //==============================
 //    GETTERS
 //==============================
- 
+Case get_case(int i, int j);
 //==============================
 //    SETTERS
 //==============================
@@ -43,6 +43,7 @@ public:
  void show();
  void death();
  void metabolism();
+ void diffusion();
 
 protected:
 //==============================

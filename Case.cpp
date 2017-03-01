@@ -19,8 +19,8 @@
 Case::Case(){
 	organites_= {0.,0.,0.};
 	cell_= nullptr;
-	
 }
+
 Case::Case(vector <float> organites, char c){
   if (c=='a'){
     cell_ = new CellA();}
@@ -49,6 +49,15 @@ void Case::set_cell(char c){
     if (c=='b'){
 		cell_ = new CellB();}
 }
+
+void Case::set_organites(vector <float> org){
+	for (int i=0; i<3; i++){
+		organites_[i]=org[i];
+	}
+}
+	
+		
+	
 	
 //==============================
 //    DESTRUCTOR
@@ -56,7 +65,7 @@ void Case::set_cell(char c){
 
 Case::~Case(){
 	if(cell_!= nullptr){
-		delete cell_;
+		//delete cell_;
 		
 	}
 }
@@ -81,14 +90,16 @@ int Case::containsA(){
 }
 
 void Case::death(){
-	float random = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-	vector <float> conc = cell_->phen();
-	if(random<=cell_->P_death_){
-		for (int i=0; i<3; i++){
-			organites_[i]+=conc[i];
+	if(cell_){
+		float random = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+		vector <float> conc = cell_->phen();
+		if(random<=cell_->P_death_){
+			for (int i=0; i<3; i++){
+				organites_[i]+=conc[i];
+			}
+			
+			cell_= nullptr;
 		}
-		
-		cell_= nullptr;
 	}
 }
 			
@@ -103,8 +114,7 @@ void Case::metabolism(){
 	}
 }
 		
-		
-	
+
 	
 	
 	
