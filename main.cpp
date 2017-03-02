@@ -27,7 +27,7 @@ using namespace std;
 
 int main(int argc, char const *argv[])
 {   
-	Environnement env = Environnement(30,20,0.05);
+	Environnement env = Environnement(5,500,0.1);
 	env.run(1000);
 	
 	

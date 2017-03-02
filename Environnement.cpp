@@ -26,7 +26,7 @@ Environnement::Environnement(){
 	H_ = 5; 
 	T_ = 700;
 	D_ = 0.001;
-	P_mut_ = 0.001;
+	P_mut_ = 0;
 	grille  = new Case* [H_];
 	for(int i=0; i<H_;i++){
 		grille[i] = new Case[W_];
@@ -44,7 +44,7 @@ Environnement::Environnement(float Ainit,int T,float D){
 	H_ = 32; 
 	T_ = T;
 	D_ = D;
-	P_mut_=0.06;
+	P_mut_=0.05;
 	grille  = new Case* [H_];
 	for(int i=0; i<H_;i++){
 		grille[i] = new Case[W_];
@@ -114,10 +114,9 @@ void Environnement::filling(){
 }
 
 /**
- * display the grid
+ * display the grid with two colors to visualize genotypes
  */
 void Environnement::show(){
-	cout << "Types of cells present in the grid " << endl;
 	for (int i=0; i<H_; i++){
 		for(int j=0; j<W_; j++){
 			if(grille[i][j].containsA() == 1){
@@ -303,15 +302,29 @@ void Environnement::competition(){
 				//cout << fitness_max << endl;
 				
 				if(fitness_max>0){
-					//randomly determines if the dividing cell will mutate
+					//determines if the dividing cell will mutate
 					float random = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-					//fills the empty case with an adequate cell
-					if((grille[h_max][v_max].containsA()==1 && random >= P_mut_) || (grille[h_max][v_max].containsA()==0 && random<P_mut_)){
-						grille[i][j].set_cell('a',grille[h_max][v_max].division());
+					//fills the empty case with an adequate cell, changing its genotype if mutated
+					char c = ' ';
+					if((grille[h_max][v_max].containsA()==1)){
+						if(random >= P_mut_){
+							c='a';
+						}
+						else{
+							c='b';
+						}
 					}
 					else{
-						grille[i][j].set_cell('b',grille[h_max][v_max].division());
+						if(random >= P_mut_){
+							c='b';
+						}
+						else{
+							c='a';
+						}
 					}
+					vector <float> phen = grille[h_max][v_max].division();
+					grille[i][j].set_cell(c,phen);
+					grille[h_max][v_max].set_cell(c,phen);
 				}
 			}
 		}
@@ -319,20 +332,22 @@ void Environnement::competition(){
 }
 
 /**
- * general simulation, with a given number of iterations
+ * global simulation, from initial state to the state at a given time t
+ * shows the state of the grid at aech step of time (0.1)
  */
 void Environnement::run(int t){
 	show();
 	//showA();
 	//showB();
-	for (int i=0; i<t*10; i++){
-		if(i%(T_*10) == 0){
+	for (int i=0; i<t; i++){
+		if(i%(T_) == 0){
 			reset();
 		}
 		diffusion();
 		death();
 		competition();
 		metabolism();
+		cout << "******************************************************* time " << i << endl;
 		show();
 	}
 }
