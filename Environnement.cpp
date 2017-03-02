@@ -139,7 +139,9 @@ void Environnement::show(){
 		cout << endl;
 	}
 }
-
+/**
+ * Shows the concentrations of A organite in each case of the grid
+ */
 void Environnement::showA(){
 	cout << "Concentration in glucose of the grid" << endl;
 	for (int i=0; i<H_; i++){
@@ -149,7 +151,9 @@ void Environnement::showA(){
 		cout << endl;
 	}
 }
-
+/**
+ * Shows the concentrations of b organite in each case of the grid
+ */
 void Environnement::showB(){
 	cout << "Concentration in Acetate of the grid" << endl;
 	for (int i=0; i<H_; i++){
@@ -330,18 +334,6 @@ void Environnement::run(int t){
 		competition();
 		metabolism();
 		show();
-		
-		//cout << "A dans case 1 1 : " << grille[1][1].organites()[0] << ' ' << grille[1][1].organites()[1]  << ' ' << grille[1][1].organites()[2]  << endl;
-		//cout << "A dans cell 1 1 : " << grille[1][1].phen()[0] << ' ' << grille[1][1].phen()[1]  << ' ' << grille[1][1].phen()[2]  << endl;
-		
-		/*float sum = 0;
-		for (int i=0; i<H_; i++){
-			for(int j=0; j<W_; j++){
-				sum+=grille[1][1].organites()[0];
-			}
-		}*/
-		//cout << "somme de A dans grille: " << sum << endl;
-		//cout << ' ' << endl;
 	}
 }
 	
