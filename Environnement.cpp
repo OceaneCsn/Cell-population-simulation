@@ -9,6 +9,8 @@
 #include <iostream>
 #include <vector>
 
+#define couleur(param) printf("\033[%sm",param)
+
 using namespace std;
 
 //==============================
@@ -42,7 +44,7 @@ Environnement::Environnement(float Ainit,int T,float D){
 	H_ = 32; 
 	T_ = T;
 	D_ = D;
-	P_mut_=0.2;
+	P_mut_=0.06;
 	grille  = new Case* [H_];
 	for(int i=0; i<H_;i++){
 		grille[i] = new Case[W_];
@@ -115,21 +117,49 @@ void Environnement::filling(){
  * display the grid
  */
 void Environnement::show(){
+	cout << "Types of cells present in the grid " << endl;
 	for (int i=0; i<H_; i++){
 		for(int j=0; j<W_; j++){
 			if(grille[i][j].containsA() == 1){
-				cout << 'a';
+				couleur("34");
+				printf("a ");
+				couleur("0");
+				//cout << 'a';
 			}
 			else if(grille[i][j].containsA() == 0){
-				cout << 'b';
+				//cout << 'b';
+				couleur("31");
+				printf("b ");
+				couleur("0");
 			}
 			else{
-				cout << ' ';
+				cout << "  ";
 			}
 		}
 		cout << endl;
 	}
 }
+
+void Environnement::showA(){
+	cout << "Concentration in glucose of the grid" << endl;
+	for (int i=0; i<H_; i++){
+		for(int j=0; j<W_; j++){
+			cout << grille[1][1].organites()[0] << " ";
+		}
+		cout << endl;
+	}
+}
+
+void Environnement::showB(){
+	cout << "Concentration in Acetate of the grid" << endl;
+	for (int i=0; i<H_; i++){
+		for(int j=0; j<W_; j++){
+			cout << grille[1][1].organites()[1] << " ";
+		}
+		cout << endl;
+	}
+}
+
 
 /**
  * applies a random death method to all the cells in the grid
@@ -186,19 +216,30 @@ void Environnement::diffusion(){
 					else{
 						h=j+l;
 					}
+					//cout << "coord voisine de" << i << "," << j << ":" <<v << ',' << h << endl;
 					//acquiring organites from neighbouring cells in a new vector 
 					vector <float> newvec = grille[i][j].organites();
-					for(int m=0; m<3; m++){
-						newvec[m]+=D_*(grille[v][h].organites()[m]);
+					if(k==0 && l==0){
+						for(int m=0; m<3; m++){
+							newvec[m] = newvec[m] + D_*oldvec[m];
+						}
 					}
+					else{
+						for(int m=0; m<3; m++){
+							newvec[m] = newvec[m] + D_*(grille[v][h].organites()[m]);
+						}
+					}
+						
+					//cout << "ajout de A : " << D_*(grille[v][h].organites()[0]) << endl;
 					grille[i][j].set_organites(newvec);
 				}
 			}
 			//losing organites to neighbouring cells
 			vector <float> newvec2 = grille[i][j].organites();
 			for(int m=0; m<3; m++){
-				newvec2[m]-=9*D_*oldvec[m];
+				newvec2[m] = newvec2[m] - 9*D_*oldvec[m];
 			}
+			//cout << "enlevé de A : " << 9*D_*oldvec[0] << endl;
 			//final vector at time t+1
 			grille[i][j].set_organites(newvec2);
 		}
@@ -255,17 +296,11 @@ void Environnement::competition(){
 						}
 					}
 				}
-				cout << fitness_max << endl;
+				//cout << fitness_max << endl;
 				
 				if(fitness_max>0){
 					//randomly determines if the dividing cell will mutate
 					float random = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-					if(random<P_mut_){
-						cout << "mutation" << endl;
-					}
-					else{
-						cout << "pas mutation" << endl;
-					}
 					//fills the empty case with an adequate cell
 					if((grille[h_max][v_max].containsA()==1 && random >= P_mut_) || (grille[h_max][v_max].containsA()==0 && random<P_mut_)){
 						grille[i][j].set_cell('a',grille[h_max][v_max].division());
@@ -284,32 +319,35 @@ void Environnement::competition(){
  */
 void Environnement::run(int t){
 	show();
+	//showA();
+	//showB();
 	for (int i=0; i<t*10; i++){
 		if(i%(T_*10) == 0){
 			reset();
 		}
-		//diffusion();
+		diffusion();
 		death();
 		competition();
 		metabolism();
 		show();
-		cout << grille[1][1].organites()[0] << ' ' << grille[1][1].organites()[1]  << ' ' << grille[1][1].organites()[2]  << endl;
-		cout << grille[1][1].phen()[0] << ' ' << grille[1][1].phen()[1]  << ' ' << grille[1][1].phen()[2]  << endl;
 		
-		float sum = 0;
+		//cout << "A dans case 1 1 : " << grille[1][1].organites()[0] << ' ' << grille[1][1].organites()[1]  << ' ' << grille[1][1].organites()[2]  << endl;
+		//cout << "A dans cell 1 1 : " << grille[1][1].phen()[0] << ' ' << grille[1][1].phen()[1]  << ' ' << grille[1][1].phen()[2]  << endl;
+		
+		/*float sum = 0;
 		for (int i=0; i<H_; i++){
 			for(int j=0; j<W_; j++){
 				sum+=grille[1][1].organites()[0];
 			}
-		}
-		cout << "somme de A : " << sum << endl;
-		cout << ' ' << endl;
+		}*/
+		//cout << "somme de A dans grille: " << sum << endl;
+		//cout << ' ' << endl;
 	}
-	//show();
 }
 	
 			
-			
+
+
 			
 			
 	

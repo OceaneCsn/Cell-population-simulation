@@ -17,7 +17,7 @@ using namespace std;
  * Default Constructor
  */
 Cell::Cell(){
-	P_death_=0.02;
+	P_death_=0.09;
 	W_min_=0.001;
 	phen_={0.0,0.0,0.0};
 }

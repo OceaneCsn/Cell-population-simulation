@@ -34,6 +34,8 @@ Case get_case(int i, int j);
  void reset();
  void filling();
  void show();
+ void showA();
+ void showB();
  void death();
  void metabolism();
  void diffusion();
