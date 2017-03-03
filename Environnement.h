@@ -33,7 +33,7 @@ Case get_case(int i, int j);
 //==============================
  void reset();
  void filling();
- void show();
+ int show();
  void showA();
  void showB();
  void death();

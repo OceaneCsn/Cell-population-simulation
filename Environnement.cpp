@@ -26,7 +26,7 @@ Environnement::Environnement(){
 	H_ = 5; 
 	T_ = 700;
 	D_ = 0.001;
-	P_mut_ = 0;
+	P_mut_ = 0.01;
 	grille  = new Case* [H_];
 	for(int i=0; i<H_;i++){
 		grille[i] = new Case[W_];
@@ -44,7 +44,7 @@ Environnement::Environnement(float Ainit,int T,float D){
 	H_ = 32; 
 	T_ = T;
 	D_ = D;
-	P_mut_=0.05;
+	P_mut_=0.0;
 	grille  = new Case* [H_];
 	for(int i=0; i<H_;i++){
 		grille[i] = new Case[W_];
@@ -115,27 +115,44 @@ void Environnement::filling(){
 
 /**
  * display the grid with two colors to visualize genotypes
+ * also evaluates the state of the population, and return the number of different living genotypes
  */
-void Environnement::show(){
+int Environnement::show(){
+	int cptA = 0;
+	int cptB = 0;
 	for (int i=0; i<H_; i++){
 		for(int j=0; j<W_; j++){
 			if(grille[i][j].containsA() == 1){
 				couleur("34");
 				printf("a ");
 				couleur("0");
-				//cout << 'a';
+				cptA++;
 			}
 			else if(grille[i][j].containsA() == 0){
-				//cout << 'b';
 				couleur("31");
 				printf("b ");
 				couleur("0");
+				cptB++;
 			}
 			else{
 				cout << "  ";
 			}
 		}
 		cout << endl;
+	}
+	if(cptB==0){
+		if(cptA==0){
+			cout << "Extinction" << endl;
+			return 0;
+		}
+		else{
+			cout << "Exclusion" << endl;
+			return 1;
+		}
+	}
+	else{
+		cout << "Cohabitation" << endl;
+		return 2;
 	}
 }
 /**
@@ -219,7 +236,6 @@ void Environnement::diffusion(){
 					else{
 						h=j+l;
 					}
-					//cout << "coord voisine de" << i << "," << j << ":" <<v << ',' << h << endl;
 					//acquiring organites from neighbouring cells in a new vector 
 					vector <float> newvec = grille[i][j].organites();
 					if(k==0 && l==0){
@@ -232,8 +248,6 @@ void Environnement::diffusion(){
 							newvec[m] = newvec[m] + D_*(grille[v][h].organites()[m]);
 						}
 					}
-						
-					//cout << "ajout de A : " << D_*(grille[v][h].organites()[0]) << endl;
 					grille[i][j].set_organites(newvec);
 				}
 			}
@@ -242,7 +256,6 @@ void Environnement::diffusion(){
 			for(int m=0; m<3; m++){
 				newvec2[m] = newvec2[m] - 9*D_*oldvec[m];
 			}
-			//cout << "enlevé de A : " << 9*D_*oldvec[0] << endl;
 			//final vector at time t+1
 			grille[i][j].set_organites(newvec2);
 		}
@@ -311,6 +324,7 @@ void Environnement::competition(){
 							c='a';
 						}
 						else{
+							//cout << "mutation " << i << " " << j << "avec " << v_max << " " << h_max << endl;
 							c='b';
 						}
 					}
@@ -319,12 +333,15 @@ void Environnement::competition(){
 							c='b';
 						}
 						else{
+							//cout << "mutation " << i << " " << j << h_max << " " << v_max << endl;
 							c='a';
 						}
 					}
 					vector <float> phen = grille[h_max][v_max].division();
 					grille[i][j].set_cell(c,phen);
-					grille[h_max][v_max].set_cell(c,phen);
+					if(random >= P_mut_){
+						grille[h_max][v_max].set_cell(c,phen);
+					}
 				}
 			}
 		}
@@ -334,11 +351,11 @@ void Environnement::competition(){
 /**
  * global simulation, from initial state to the state at a given time t
  * shows the state of the grid at aech step of time (0.1)
+ * ends the simulation if extinction or exclusion is detected before t to avoid useless computing
  */
 void Environnement::run(int t){
 	show();
-	//showA();
-	//showB();
+	int nb = 0;
 	for (int i=0; i<t; i++){
 		if(i%(T_) == 0){
 			reset();
@@ -348,7 +365,10 @@ void Environnement::run(int t){
 		competition();
 		metabolism();
 		cout << "******************************************************* time " << i << endl;
-		show();
+		nb = show();
+		if( nb == 0 || nb == 1 ){
+			break;
+		}
 	}
 }
 	
