@@ -26,7 +26,7 @@ Environnement::Environnement(){
 	H_ = 5; 
 	T_ = 700;
 	D_ = 0.001;
-	P_mut_ = 0.01;
+	P_mut_ = 0;
 	grille  = new Case* [H_];
 	for(int i=0; i<H_;i++){
 		grille[i] = new Case[W_];
@@ -44,7 +44,7 @@ Environnement::Environnement(float Ainit,int T,float D){
 	H_ = 32; 
 	T_ = T;
 	D_ = D;
-	P_mut_=0.0;
+	P_mut_=0.01;
 	grille  = new Case* [H_];
 	for(int i=0; i<H_;i++){
 		grille[i] = new Case[W_];
@@ -155,6 +155,39 @@ int Environnement::show(){
 		return 2;
 	}
 }
+
+/**
+ * returns 0 in case of extinction, 1 in case of exclusion and 2 in case of cohabitation
+ **/
+int Environnement::state(){
+	int cptA = 0;
+	int cptB = 0;
+	for (int i=0; i<H_; i++){
+		for(int j=0; j<W_; j++){
+			if(grille[i][j].containsA() == 1){
+				cptA++;
+			}
+			else if(grille[i][j].containsA() == 0){
+				cptB++;
+			}
+		}
+	}
+	if(cptB==0){
+		if(cptA==0){
+			cout << "Extinction" << endl;
+			return 0;
+		}
+		else{
+			cout << "Exclusion" << endl;
+			return 1;
+		}
+	}
+	else{
+		cout << "Cohabitation" << endl;
+		return 2;
+	}
+}
+
 /**
  * Shows the concentrations of A organite in each case of the grid
  */
@@ -167,6 +200,7 @@ void Environnement::showA(){
 		cout << endl;
 	}
 }
+
 /**
  * Shows the concentrations of b organite in each case of the grid
  */
@@ -352,8 +386,9 @@ void Environnement::competition(){
  * global simulation, from initial state to the state at a given time t
  * shows the state of the grid at aech step of time (0.1)
  * ends the simulation if extinction or exclusion is detected before t to avoid useless computing
+ * returns 0 in case of extinction, 1 in case of exclusion and 2 in case of cohabitation
  */
-void Environnement::run(int t){
+int Environnement::run(int t){
 	show();
 	int nb = 0;
 	for (int i=0; i<t; i++){
@@ -366,15 +401,38 @@ void Environnement::run(int t){
 		metabolism();
 		cout << "******************************************************* time " << i << endl;
 		nb = show();
-		if( nb == 0 || nb == 1 ){
+		if( nb == 0){
 			break;
 		}
 	}
+	return nb;
 }
+
+/**
+ * similar as run, but does not display the grid for faster execution
+ */
+int Environnement::run_diagram(int t){
+	int nb = 0;
+	for (int i=0; i<t; i++){
+		if(i%(T_) == 0){
+			reset();
+		}
+		diffusion();
+		death();
+		competition();
+		metabolism();
+		cout << "time " << i << endl;
+		nb = state();
+		if( nb == 0){
+			break;
+		}
+	}
+	return nb;
+}
+	
+
 	
 			
 
-
-			
 			
 	

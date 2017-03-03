@@ -40,7 +40,9 @@ Case get_case(int i, int j);
  void metabolism();
  void diffusion();
  void competition();
- void run(int t);
+ int run(int t);
+ int state();
+ int run_diagram(int t);
 
 protected:
 
