@@ -9,7 +9,7 @@ main.o: main.cpp Case.cpp Environnement.cpp Cell.cpp CellA.cpp CellA.cpp
 Case.o: Case.cpp Case.h Cell.h CellA.h CellB.h 
 	g++ -g -c -Wall  Case.cpp -o Case.o -std=c++11
 
-Environnement.o :  Environnement.cpp Environnement.h Case.h
+Environnement.o :  Environnement.cpp Environnement.h
 	g++ -g -c -Wall   Environnement.cpp -o Environnement.o -std=c++11
 
 Cell.o:  Cell.cpp Cell.h

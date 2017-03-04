@@ -44,7 +44,7 @@ Environnement::Environnement(float Ainit,int T,float D){
 	H_ = 32; 
 	T_ = T;
 	D_ = D;
-	P_mut_=0.01;
+	P_mut_=0.0;
 	grille  = new Case* [H_];
 	for(int i=0; i<H_;i++){
 		grille[i] = new Case[W_];
@@ -151,8 +151,14 @@ int Environnement::show(){
 		}
 	}
 	else{
-		cout << "Cohabitation" << endl;
-		return 2;
+		if(cptA==0){
+			cout << "Selection" << endl;
+			return 1;
+		}
+		else{
+			cout << "Cohabitation" << endl;
+			return 2;
+		}
 	}
 }
 
@@ -174,17 +180,23 @@ int Environnement::state(){
 	}
 	if(cptB==0){
 		if(cptA==0){
-			cout << "Extinction" << endl;
+			//cout << "Extinction" << endl;
 			return 0;
 		}
 		else{
-			cout << "Exclusion" << endl;
+			//cout << "Exclusion" << endl;
 			return 1;
 		}
 	}
 	else{
-		cout << "Cohabitation" << endl;
-		return 2;
+		if(cptA==0){
+			//cout << "Selection" << endl;
+			return 1;
+		}
+		else{
+			//cout << "Cohabitation" << endl;
+			return 2;
+	}
 	}
 }
 
@@ -202,7 +214,7 @@ void Environnement::showA(){
 }
 
 /**
- * Shows the concentrations of b organite in each case of the grid
+ * Shows the concentrations of B organite in each case of the grid
  */
 void Environnement::showB(){
 	cout << "Concentration in Acetate of the grid" << endl;
@@ -358,7 +370,6 @@ void Environnement::competition(){
 							c='a';
 						}
 						else{
-							//cout << "mutation " << i << " " << j << "avec " << v_max << " " << h_max << endl;
 							c='b';
 						}
 					}
@@ -367,7 +378,6 @@ void Environnement::competition(){
 							c='b';
 						}
 						else{
-							//cout << "mutation " << i << " " << j << h_max << " " << v_max << endl;
 							c='a';
 						}
 					}
@@ -384,7 +394,7 @@ void Environnement::competition(){
 
 /**
  * global simulation, from initial state to the state at a given time t
- * shows the state of the grid at aech step of time (0.1)
+ * shows the state of the grid at aech step of time
  * ends the simulation if extinction or exclusion is detected before t to avoid useless computing
  * returns 0 in case of extinction, 1 in case of exclusion and 2 in case of cohabitation
  */
@@ -409,7 +419,8 @@ int Environnement::run(int t){
 }
 
 /**
- * similar as run, but does not display the grid for faster execution
+ * similar as run, but does not display the grid for faster execution,
+ * as it will be called repeatedly in the main function diagram
  */
 int Environnement::run_diagram(int t){
 	int nb = 0;
@@ -421,12 +432,13 @@ int Environnement::run_diagram(int t){
 		death();
 		competition();
 		metabolism();
-		cout << "time " << i << endl;
+		//cout << "time " << i << endl;
 		nb = state();
 		if( nb == 0){
 			break;
 		}
 	}
+	//cout << nb << endl;
 	return nb;
 }
 	

@@ -119,7 +119,7 @@ int Case::containsA(){
 }
 
 /**
- * Randomly kills cell in the case
+ * Randomly kills the cell in the case
  */
 void Case::death(){
 	if(cell_){
