@@ -19,6 +19,18 @@ using namespace std;
 #include "CellB.h"
 
 #define couleur(param) printf("\033[%sm",param)
+void diagram(int Tmin, int Tmax, int Amin, int Amax, int Pt, int Pa);
+//==============================
+//    MAIN
+//==============================
+
+int main(int argc, char const *argv[])
+{   
+	
+	diagram(1,1501,0,50,150,5);
+	//simple_run(500, 0 , 751, 0.1);
+  return 0;
+}
 
 //==============================
 //    FUNCTIONS
@@ -94,6 +106,7 @@ void diagram(int Tmin, int Tmax, int Amin, int Amax, int Pt, int Pa){
 				}
 				couleur("0");
 			}
+			//alignement
 			else{
 				cout << diagram[i][j] << " ";
 				if(diagram[i][j]<10 && j==0){
@@ -115,14 +128,4 @@ void diagram(int Tmin, int Tmax, int Amin, int Amax, int Pt, int Pa){
 	delete[] diagram;	
 }
 
-//==============================
-//    MAIN
-//==============================
 
-int main(int argc, char const *argv[])
-{   
-	
-	diagram(1,1501,0,50,150,1);
-	//simple_run(500, 0 , 751, 0.1);
-  return 0;
-}

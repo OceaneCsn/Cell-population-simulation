@@ -432,17 +432,18 @@ int Environnement::run_diagram(int t){
 		death();
 		competition();
 		metabolism();
-		//cout << "time " << i << endl;
 		nb = state();
-		if( nb == 0){
+		//stops the run if the final state won't change anymore
+		//(in case of extinction, or selection with no possible exctinction to come)
+		if( nb == 0 || (nb == 1 and Ainit_ >= 5)){
 			break;
 		}
 	}
-	//cout << nb << endl;
 	return nb;
 }
 	
 
+	
 	
 			
 
