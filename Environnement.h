@@ -60,4 +60,3 @@ Case** grille;
 };
 
 #endif // ENVIRONNEMENT_H
-

@@ -27,7 +27,7 @@ void diagram(int Tmin, int Tmax, int Amin, int Amax, int Pt, int Pa);
 int main(int argc, char const *argv[])
 {   
 	
-	diagram(1,1501,0,50,150,5);
+	diagram(1,701,0,8,100,2);
 	//simple_run(500, 0 , 751, 0.1);
   return 0;
 }
@@ -41,7 +41,7 @@ int main(int argc, char const *argv[])
  */
 void simple_run(int t, int A, int T, float D){
 	Environnement env = Environnement(A,T,D);
-	env.run(1000);
+	env.run(t);
 }
 
 /**
@@ -69,9 +69,9 @@ void diagram(int Tmin, int Tmax, int Amin, int Amax, int Pt, int Pa){
 	//Points of the diagram
 	int cpt = 0;
 	for(int T=Tmin; T<=Tmax; T+=Pt){
-		for (int A=Amin+1; A<=Amax+1; A+=Pa){
+		for (int A=Amin; A<=Amax; A+=Pa){
 			cpt++;
-			cout << " Simulation " << cpt << " sur " << (Tmax-Tmin)/Pt*(Amax-Amin)/Pa << ", Ainit = " << A << " et T = " << T;
+			cout << " Simulation " << cpt << " sur " << (Tmax-Tmin+Pt)/Pt*(Amax-Amin+Pa)/Pa << ", Ainit = " << A << " et T = " << T;
 			Environnement env = Environnement(A,T,0.1);
 			diagram[(Tmax-T)/Pt][(A-Amin)/Pa+1]=env.run_diagram(1000);
 			if (diagram[(Tmax-T)/Pt][(A-Amin)/Pa+1]==0){

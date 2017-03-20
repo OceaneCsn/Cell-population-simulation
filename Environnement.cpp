@@ -44,7 +44,7 @@ Environnement::Environnement(float Ainit,int T,float D){
 	H_ = 32; 
 	T_ = T;
 	D_ = D;
-	P_mut_=0.0;
+	P_mut_=0.001;
 	grille  = new Case* [H_];
 	for(int i=0; i<H_;i++){
 		grille[i] = new Case[W_];
@@ -320,7 +320,7 @@ void Environnement::competition(){
 				int fitness_max = 0;
 				int v_max = 0;
 				int h_max=0;
-				//browsing neighbourhood
+				//browsing neighbo	urhood
 				for (int k=-1; k<2; k++){
 					for(int l=-1; l<2; l++){
 						if( k!=0 && l!=0 ) {
@@ -408,7 +408,9 @@ int Environnement::run(int t){
 		diffusion();
 		death();
 		competition();
-		metabolism();
+		for( int j=0; j<10; j++){
+			metabolism();
+		}
 		cout << "******************************************************* time " << i << endl;
 		nb = show();
 		if( nb == 0){
@@ -431,11 +433,14 @@ int Environnement::run_diagram(int t){
 		diffusion();
 		death();
 		competition();
-		metabolism();
+		for( int j=0; j<10; j++){
+			metabolism();
+		}
+		//metabolism();
 		nb = state();
 		//stops the run if the final state won't change anymore
 		//(in case of extinction, or selection with no possible exctinction to come)
-		if( nb == 0 || (nb == 1 and Ainit_ >= 5)){
+		if( nb == 0 || (nb == 1 and Ainit_ >5)){
 			break;
 		}
 	}
