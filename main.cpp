@@ -19,7 +19,12 @@ using namespace std;
 #include "CellB.h"
 
 #define couleur(param) printf("\033[%sm",param)
+
+void Rdiagram(int Tmin, int Tmax, int Amin, int Amax, int Pt, int Pa);
 void diagram(int Tmin, int Tmax, int Amin, int Amax, int Pt, int Pa);
+void simple_run(int t, int A, int T, float D);
+
+
 //==============================
 //    MAIN
 //==============================
@@ -27,8 +32,8 @@ void diagram(int Tmin, int Tmax, int Amin, int Amax, int Pt, int Pa);
 int main(int argc, char const *argv[])
 {   
 	
-	diagram(1,701,0,8,100,2);
-	//simple_run(500, 0 , 751, 0.1);
+	Rdiagram(1,1501,0,50,100,2);
+	//simple_run(500, 20 , 751, 0.1);
   return 0;
 }
 
@@ -44,6 +49,37 @@ void simple_run(int t, int A, int T, float D){
 	env.run(t);
 }
 
+void Rdiagram(int Tmin, int Tmax, int Amin, int Amax, int Pt, int Pa){
+	ofstream file("Rdiagram.txt", ios::out | ios::trunc);
+	if(file){  
+		file << "Ainit " << "T " << "val" << endl;
+		int nb_it = (Tmax-Tmin+Pt)/Pt*(Amax-Amin+Pa)/Pa;
+		int cpt = 0;
+		for(int T=Tmin; T<=Tmax; T+=Pt){
+			for (int A=Amin; A<=Amax; A+=Pa){
+				cpt++;
+				cout << " Simulation " << cpt << " sur " << nb_it << ", Ainit = " << A << " et T = " << T;
+				Environnement env = Environnement(A,T,0.1);
+				int result = env.run_diagram(1000);
+				file << A << " " << T << " " << result << endl;
+				if (result==0){
+					cout << ":		Extinction" << endl;
+				}
+				else if (result==1){
+					cout << ":		Selection" << endl;
+				}
+				else{
+					cout << ":		Cohabitation" << endl;
+				}
+			}
+		}
+		file.close();
+	}
+	else{
+		cerr << "Opening error !" << endl;
+	}
+}
+	
 /**
  * Computes several runs with differents values of Ainit and T to return a state diagram
  * in those 2 dimensions.
@@ -55,7 +91,7 @@ void diagram(int Tmin, int Tmax, int Amin, int Amax, int Pt, int Pa){
 	//creation of the array, with an additionnal dimension to store the diagram axis
 	diagram  = new int* [(Tmax-Tmin)/Pt+2];
 	for(int i=0; i<(Tmax-Tmin)/Pt+2;i++){
-		diagram[i] = new int[(Amax-Amin)/Pa+1];
+		diagram[i] = new int[(Amax-Amin)/Pa+2];
 	}
 	
 	//Filling of the axis with parameters values
@@ -66,12 +102,13 @@ void diagram(int Tmin, int Tmax, int Amin, int Amax, int Pt, int Pa){
 		}
 	}
 	
+	int nb_it = (Tmax-Tmin+Pt)/Pt*(Amax-Amin+Pa)/Pa;
 	//Points of the diagram
 	int cpt = 0;
 	for(int T=Tmin; T<=Tmax; T+=Pt){
 		for (int A=Amin; A<=Amax; A+=Pa){
 			cpt++;
-			cout << " Simulation " << cpt << " sur " << (Tmax-Tmin+Pt)/Pt*(Amax-Amin+Pa)/Pa << ", Ainit = " << A << " et T = " << T;
+			cout << " Simulation " << cpt << " sur " << nb_it << ", Ainit = " << A << " et T = " << T;
 			Environnement env = Environnement(A,T,0.1);
 			diagram[(Tmax-T)/Pt][(A-Amin)/Pa+1]=env.run_diagram(1000);
 			if (diagram[(Tmax-T)/Pt][(A-Amin)/Pa+1]==0){

@@ -440,7 +440,7 @@ int Environnement::run_diagram(int t){
 		nb = state();
 		//stops the run if the final state won't change anymore
 		//(in case of extinction, or selection with no possible exctinction to come)
-		if( nb == 0 || (nb == 1 and Ainit_ >5)){
+		if( nb == 0/* || (nb == 1 and Ainit_ >20)*/){
 			break;
 		}
 	}
