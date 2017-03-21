@@ -44,7 +44,7 @@ Environnement::Environnement(float Ainit,int T,float D){
 	H_ = 32; 
 	T_ = T;
 	D_ = D;
-	P_mut_=0.001;
+	P_mut_=0.00;
 	grille  = new Case* [H_];
 	for(int i=0; i<H_;i++){
 		grille[i] = new Case[W_];

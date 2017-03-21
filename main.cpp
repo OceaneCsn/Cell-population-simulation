@@ -31,9 +31,10 @@ void simple_run(int t, int A, int T, float D);
 
 int main(int argc, char const *argv[])
 {   
-	
-	Rdiagram(1,1501,0,50,100,2);
 	//simple_run(500, 20 , 751, 0.1);
+	Rdiagram(1,1001,0,50,500,25);
+	system("Rscript Plot_heatmap.R Rdiagram.txt out.pdf");
+	
   return 0;
 }
 
