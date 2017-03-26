@@ -57,6 +57,8 @@ int T_ ; //frequence of grid cleaning
 float D_; //diffusion
 float P_mut_;
 Case** grille;
+int cA;
+int cB;
 };
 
 #endif // ENVIRONNEMENT_H

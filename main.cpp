@@ -20,10 +20,14 @@ using namespace std;
 
 #define couleur(param) printf("\033[%sm",param)
 
-void Rdiagram(int Tmin, int Tmax, int Amin, int Amax, int Pt, int Pa);
+void Rdiagram(int Tmin, int Tmax, float Amin, float Amax, int Pt, float Pa);
 void diagram(int Tmin, int Tmax, int Amin, int Amax, int Pt, int Pa);
 void simple_run(int t, int A, int T, float D);
 
+//obliges de faire 10000?
+//conditions d'approximation de l'etat?
+
+//diagramme de classes : state, ordre des contructeurs, manque les constructeurs cellA et cellB
 
 //==============================
 //    MAIN
@@ -31,8 +35,8 @@ void simple_run(int t, int A, int T, float D);
 
 int main(int argc, char const *argv[])
 {   
-	//simple_run(500, 20 , 751, 0.1);
-	Rdiagram(1,1001,0,50,500,25);
+	//simple_run(1000, 15 , 1, 0.1);
+	Rdiagram(1,801,0,50,50,2);
 	system("Rscript Plot_heatmap.R Rdiagram.txt out.pdf");
 	
   return 0;
@@ -45,13 +49,13 @@ int main(int argc, char const *argv[])
  * Display a simulation with values of Ainit, T and D passed in parameters, that lasts the time t
  * We can see the time evolution of the grid, with the genotypes A in blue, and B in red.
  */
-void simple_run(int t, int A, int T, float D){
+void simple_run(int t, float A, int T, float D){
 	Environnement env = Environnement(A,T,D);
 	env.run(t);
 }
 
-void Rdiagram(int Tmin, int Tmax, int Amin, int Amax, int Pt, int Pa){
-	ofstream file("Rdiagram.txt", ios::out | ios::trunc);
+/*void RdiagramOptimized(int Amin, int Amax, int Tmin, int Tmax){
+	ofstream file("RdiagramOptimized.txt", ios::out | ios::trunc);
 	if(file){  
 		file << "Ainit " << "T " << "val" << endl;
 		int nb_it = (Tmax-Tmin+Pt)/Pt*(Amax-Amin+Pa)/Pa;
@@ -78,6 +82,40 @@ void Rdiagram(int Tmin, int Tmax, int Amin, int Amax, int Pt, int Pa){
 	}
 	else{
 		cerr << "Opening error !" << endl;
+	}
+}*/
+
+void Rdiagram(int Tmin, int Tmax, float Amin, float Amax, int Pt, float Pa){
+	ofstream file("Rdiagram.txt", ios::out | ios::trunc);
+	if(file){  
+		file << "Ainit " << "T " << "val" << endl;
+		int nb_it = (Tmax-Tmin+Pt)/Pt*(Amax-Amin+Pa)/Pa;
+		int cpt = 0;
+		for(int T=Tmin; T<=Tmax; T+=Pt){
+			for (float A=Amin; A<=Amax; A+=Pa){
+				cpt++;
+				cout << " Simulation " << cpt << " sur " << nb_it << ", Ainit = " << A << " et T = " << T;
+				
+				Environnement env = Environnement(A,T,0.1);
+				int result = env.run_diagram(1000);
+				file << A << " " << T << " " << result << endl;
+				//A = A+Pa;
+				if (result==0){
+					cout << ":		Extinction" << endl;
+				}
+				else if (result==1){
+					cout << ":		Selection" << endl;
+				}
+				else{
+					cout << ":		Cohabitation" << endl;
+				}
+			}
+		}
+		file.close();
+		
+	}
+	else{
+		cerr << "File opening error !" << endl;
 	}
 }
 	

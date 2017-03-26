@@ -22,8 +22,8 @@ using namespace std;
  */
 Environnement::Environnement(){
 	Ainit_ = 5;
-	W_ = 5; 
-	H_ = 5; 
+	W_ = 32; 
+	H_ = 32; 
 	T_ = 700;
 	D_ = 0.001;
 	P_mut_ = 0;
@@ -33,6 +33,8 @@ Environnement::Environnement(){
 	}
 	reset();	
 	filling();
+	cA = W_*H_/2;
+	cB = W_*H_/2;
 }
 
 /**
@@ -44,14 +46,16 @@ Environnement::Environnement(float Ainit,int T,float D){
 	H_ = 32; 
 	T_ = T;
 	D_ = D;
-	P_mut_=0.00;
+	P_mut_=0.001;
 	grille  = new Case* [H_];
 	for(int i=0; i<H_;i++){
 		grille[i] = new Case[W_];
 	}
 	reset();	
 	filling();
-	
+	cA = W_*H_/2;
+	cB = W_*H_/2;
+
 }
 
 //==============================
@@ -87,6 +91,7 @@ void Environnement::filling(){
 	int cptA=0;
 	//counts the number of created cells with genotype A
 	int cptB=0;
+	char remaining = ' ';
 	//idem with cells with genotype B
 	for (int i=0; i<H_; i++){
 		for(int j=0; j<W_; j++){
@@ -101,13 +106,22 @@ void Environnement::filling(){
 					grille[i][j].set_cell('b');
 					cptB++;
 				}
+				if(cptA==W_*H_/2){
+					remaining = 'b';
+				}
+				if(cptB==W_*H_/2){
+					remaining = 'a';
+				}
+				
 			}
-			//fills the remaning cases with cells with the remaining genotype
-			if(cptA==W_*H_/2){
-				grille[i][j].set_cell('b');
-			}
-			if(cptB==W_*H_/2){
-				grille[i][j].set_cell('a');
+			else{
+				grille[i][j].set_cell(remaining);
+				if(remaining=='a'){
+					cptA++;
+				}
+				else{
+					cptB++;
+				}
 			}
 		}
 	}
@@ -166,38 +180,35 @@ int Environnement::show(){
  * returns 0 in case of extinction, 1 in case of exclusion and 2 in case of cohabitation
  **/
 int Environnement::state(){
-	int cptA = 0;
-	int cptB = 0;
-	for (int i=0; i<H_; i++){
-		for(int j=0; j<W_; j++){
-			if(grille[i][j].containsA() == 1){
-				cptA++;
-			}
-			else if(grille[i][j].containsA() == 0){
-				cptB++;
-			}
-		}
+	
+	//avec approximations
+	if(cB+cA < H_*W_/300){
+		return 0;
 	}
-	if(cptB==0){
-		if(cptA==0){
-			//cout << "Extinction" << endl;
-			return 0;
-		}
-		else{
-			//cout << "Exclusion" << endl;
-			return 1;
-		}
+
+	if(cB<cA*P_mut_ and cB!=0){
+		return 1;
 	}
-	else{
-		if(cptA==0){
-			//cout << "Selection" << endl;
-			return 1;
-		}
-		else{
-			//cout << "Cohabitation" << endl;
-			return 2;
+	if(cA<cB/300 and cA!=0){
+		return 1;
 	}
+	if(cB==0 and cA < 30){
+		return 0;
 	}
+	if(cB ==0){
+		return 1;
+	}
+	return 2;
+	
+	//sans approximation
+	
+	/*if(cB == 0 and cA ==0){
+		return 0;
+	}
+	if(cA == 0 or cB == 0){
+		return 1;
+	}		
+	return 2;*/
 }
 
 /**
@@ -229,11 +240,20 @@ void Environnement::showB(){
 
 /**
  * applies a random death method to all the cells in the grid
+ * and update the count of current living cells
  */
 void Environnement::death(){
+	int dead = 0;
 	for (int i=0; i<H_; i++){
 		for(int j=0; j<W_; j++){
-			grille[i][j].death();
+			dead = grille[i][j].death();
+			if(dead==1){
+				cA--;
+				
+			}
+			if(dead==2){
+				cB--;
+			}	
 		}
 	}
 }
@@ -358,8 +378,6 @@ void Environnement::competition(){
 						}
 					}
 				}
-				//cout << fitness_max << endl;
-				
 				if(fitness_max>0){
 					//determines if the dividing cell will mutate
 					float random = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
@@ -383,6 +401,12 @@ void Environnement::competition(){
 					}
 					vector <float> phen = grille[h_max][v_max].division();
 					grille[i][j].set_cell(c,phen);
+					if(c=='a'){
+						cA++;
+					}
+					else{
+						cB++;
+					}
 					if(random >= P_mut_){
 						grille[h_max][v_max].set_cell(c,phen);
 					}
@@ -436,14 +460,14 @@ int Environnement::run_diagram(int t){
 		for( int j=0; j<10; j++){
 			metabolism();
 		}
-		//metabolism();
 		nb = state();
 		//stops the run if the final state won't change anymore
 		//(in case of extinction, or selection with no possible exctinction to come)
-		if( nb == 0/* || (nb == 1 and Ainit_ >20)*/){
+		if( nb == 0 || nb == 1 /*and Ainit_ >=3 and T_ <=350))*/){
 			break;
 		}
 	}
+	cout << "cA : " << cA << " cB : " << cB << endl;
 	return nb;
 }
 	

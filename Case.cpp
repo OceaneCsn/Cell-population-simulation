@@ -7,8 +7,12 @@
 #include "CellA.h"
 #include "CellB.h"
 #include <cstdio>
+#include <iostream>
 #include <cstdlib>
 #include <vector>
+
+using namespace std;
+
 
 //==============================
 //    CONSTRUCTORS
@@ -120,18 +124,34 @@ int Case::containsA(){
 
 /**
  * Randomly kills the cell in the case
+ * returns 0 if no cell was killed, 1 if a cellA was killed, and B if a cellB was killed
  */
-void Case::death(){
+int Case::death(){
+	int dead = 0;
+	char c = ' ';
 	if(cell_){
+		if(cell_->isA()){
+			c = 'a';
+		}
+		else{
+			c = 'b';
+		}
 		float random = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 		vector <float> conc = cell_->phen();
 		if(random<=cell_->P_death_){
+			//cout << "moooooooooooooooooooooooooooooooooooooooooooooort de " << c << endl;
+			dead = 1;
 			for (int i=0; i<3; i++){
+				//intracellular organites spread in the case
 				organites_[i]+=conc[i];
 			}
 			cell_= nullptr;
 		}
 	}
+	if(c=='b' and dead==1){
+		return dead+1;
+	}
+	return dead;
 }
 
 /**

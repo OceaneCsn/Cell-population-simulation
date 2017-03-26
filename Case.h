@@ -59,7 +59,7 @@ void set_organites( vector <float> org );
   
 void reset(float Ainit);
 int containsA();
-void death();
+int death();
 void metabolism();
 int isEmpty();
 vector <float> division();
