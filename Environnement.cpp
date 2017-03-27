@@ -212,13 +212,39 @@ int Environnement::state(){
 }
 
 float Environnement::Bpercentage(){
-	if(cB == 0 and cA ==0){
+	
+	if(cB+cA < H_*W_/300){
+		return 0;
+	}
+
+	if(cB<cA*0.01 and cB!=0){
+		return 1;
+	}
+	if(cA<cB/1000 and cA!=0){
+		return 1;
+	}
+	if(cB==0 and cA < 30){
+		return 0;
+	}
+	if(cB ==0){
+		return 1;
+	}
+	return 2; 
+	
+	/*if(cB == 0 and cA ==0){
+		return 0;
+	}
+	if(cB+cA<50){
 		return 0;
 	}
 	else{
+		float res = (float)(cB)/(float)(cA+cB);
+		if(res<0.01 and cA+cB>100){
+			return 1;
+		}
 		//cout << "ratio " << (float)(cB)/(float)(cA+cB) << " cB " << cB << " cA " << cA << endl;
 		return 1.0+(float)(cB)/(float)(cA+cB);
-	}
+	}*/
 }
 
 /**
@@ -460,6 +486,7 @@ int Environnement::run(int t){
  */
 float Environnement::run_diagram(int t){
 	float nb = 0;
+	int cpt = 0;
 	for (int i=0; i<t; i++){
 		if(i%(T_) == 0){
 			reset();
@@ -477,13 +504,14 @@ float Environnement::run_diagram(int t){
 			nb = Bpercentage();
 			//cout << "nb env " << nb << endl;
 		}
+		cpt++;
 		//stops the run if the final state won't change anymore
 		//(in case of extinction, or selection with no possible exctinction to come)
-		if( nb == 0){
+		if( nb == 0 or (nb ==1 and Ainit_>10 and T_<400)){
 			break;
 		}
 	}
-	cout << "cA : " << cA << " cB : " << cB << endl;
+	cout << "cA : " << cA << " cB : " << cB << "temps " << cpt << endl;
 	return nb;
 }
 

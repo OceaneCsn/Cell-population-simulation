@@ -36,8 +36,8 @@ void simple_run(int t, int A, int T, float D, float Pmut);
 int main(int argc, char const *argv[])
 {   
 	//simple_run(1000, 15 , 1, 0.1);
-	float Pmut = 0.1;
-	Rdiagram(1,801,0,50,400,25,Pmut);
+	float Pmut = 0.001;
+	Rdiagram(1,801,0,50,100,10,Pmut);
 	if(Pmut == 0){
 		cout << "coucou" << endl;
 		system("Rscript Plot_heatmap_p0.R Rdiagram.txt out.pdf");
@@ -76,7 +76,7 @@ void Rdiagram(int Tmin, int Tmax, float Amin, float Amax, int Pt, float Pa,float
 				
 				Environnement env = Environnement(A,T,0.1,Pmut);
 				
-				float result = env.run_diagram(500);
+				float result = env.run_diagram(1000);
 				file << A << " " << T << " " << result << endl;
 				//cout << " nb " << result;
 				if (result==0){
