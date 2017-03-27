@@ -200,15 +200,33 @@ int Environnement::state(){
 	}
 	return 2;*/
 	
+	if(cB+cA < H_*W_/300){
+		return 0;
+	}
+
+	if(cB<cA*0.01 and cB!=0){
+		return 1;
+	}
+	if(cA<cB/1000 and cA!=0){
+		return 1;
+	}
+	if(cB==0 and cA < 30){
+		return 0;
+	}
+	if(cB ==0){
+		return 1;
+	}
+	return 2; 
+	
 	//sans approximation
 	
-	if(cB == 0 and cA ==0){
+	/*if(cB == 0 and cA ==0){
 		return 0;
 	}
 	if(cA == 0 or cB == 0){
 		return 1;
 	}		
-	return 2;
+	return 2;*/
 }
 
 float Environnement::Bpercentage(){
@@ -497,21 +515,18 @@ float Environnement::run_diagram(int t){
 		for( int j=0; j<10; j++){
 			metabolism();
 		}
-		if(P_mut_==0){
-			nb = state();
-		}
-		else{
-			nb = Bpercentage();
-			//cout << "nb env " << nb << endl;
-		}
+		
+		nb = state();
+		
+		
 		cpt++;
 		//stops the run if the final state won't change anymore
 		//(in case of extinction, or selection with no possible exctinction to come)
-		if( nb == 0 or (nb ==1 and Ainit_>10 and T_<400)){
+		if( nb == 0 or (nb ==1 and Ainit_>0 and T_<400)){
 			break;
 		}
 	}
-	cout << "cA : " << cA << " cB : " << cB << "temps " << cpt << endl;
+	cout << "cA : " << cA << " cB : " << cB << " temps " << cpt << endl;
 	return nb;
 }
 
