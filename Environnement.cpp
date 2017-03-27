@@ -266,6 +266,33 @@ float Environnement::Bpercentage(){
 }
 
 /**
+ * Shows the concentrations of A organite in each case of the grid
+ */
+void Environnement::showA(){
+	cout << "Concentration in glucose of the grid" << endl;
+	for (int i=0; i<H_; i++){
+		for(int j=0; j<W_; j++){
+			cout << grille[1][1].organites()[0] << " ";
+		}
+		cout << endl;
+	}
+}
+
+/**
+ * Shows the concentrations of B organite in each case of the grid
+ */
+void Environnement::showB(){
+	cout << "Concentration in Acetate of the grid" << endl;
+	for (int i=0; i<H_; i++){
+		for(int j=0; j<W_; j++){
+			cout << grille[1][1].organites()[1] << " ";
+		}
+		cout << endl;
+	}
+}
+
+
+/**
  * applies a random death method to all the cells in the grid
  * and update the count of current living cells
  */
@@ -463,10 +490,10 @@ int Environnement::run(int t){
 			metabolism();
 		}
 		cout << "******************************************************* time " << i << endl;
-		nb = show();
-		if( nb == 0){
+		showA();
+		/*if( nb == 0){
 			break;
-		}
+		}*/
 	}
 	return nb;
 }
@@ -490,7 +517,6 @@ float Environnement::run_diagram(int t){
 		}
 		
 		nb = state();
-		
 		
 		cpt++;
 		//stops the run if the final state won't change anymore
