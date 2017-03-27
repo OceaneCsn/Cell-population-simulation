@@ -35,7 +35,7 @@ void simple_run(int t, float A, int T, float D, float Pmut);
 
 int main(int argc, char const *argv[])
 {   
-	simple_run(1000, 15 , 1, 0.1,0.0);
+	simple_run(100, 15 , 1000, 0.1,0.0);
 	/*float Pmut = 0.00;
 	Rdiagram(1,701,0,50,100,10,Pmut);
 	if(Pmut == 0){

@@ -42,8 +42,8 @@ Environnement::Environnement(){
  */
 Environnement::Environnement(float Ainit,int T,float D, float P_mut){
 	Ainit_ = Ainit;
-	W_ = 32; 
-	H_ = 32; 
+	W_ = 5; 
+	H_ = 5; 
 	T_ = T;
 	D_ = D;
 	P_mut_=P_mut;
@@ -56,6 +56,20 @@ Environnement::Environnement(float Ainit,int T,float D, float P_mut){
 	cA = W_*H_/2;
 	cB = W_*H_/2;
 
+}
+
+Environnement::Environnement(float D){
+	Ainit_ = 10;
+	W_ = 5; 
+	H_ = 5; 
+	T_ = 200;
+	D_ = D;
+	P_mut_=0;
+	grille  = new Case* [H_];
+	for(int i=0; i<H_;i++){
+		grille[i] = new Case[W_];
+	}
+	grille[2][2].reset(10);
 }
 
 //==============================
@@ -272,7 +286,7 @@ void Environnement::showA(){
 	cout << "Concentration in glucose of the grid" << endl;
 	for (int i=0; i<H_; i++){
 		for(int j=0; j<W_; j++){
-			cout << grille[1][1].organites()[0] << " ";
+			cout << grille[i][j].organites()[0] << " ";
 		}
 		cout << endl;
 	}
@@ -285,7 +299,7 @@ void Environnement::showB(){
 	cout << "Concentration in Acetate of the grid" << endl;
 	for (int i=0; i<H_; i++){
 		for(int j=0; j<W_; j++){
-			cout << grille[1][1].organites()[1] << " ";
+			cout << grille[i][j].organites()[1] << " ";
 		}
 		cout << endl;
 	}
@@ -481,16 +495,19 @@ int Environnement::run(int t){
 	int nb = 0;
 	for (int i=0; i<t; i++){
 		if(i%(T_) == 0){
+			cout << i << " " << T_ << endl;
 			reset();
+			cout << "lavage!" << endl;
 		}
 		diffusion();
 		death();
 		competition();
+		
+		cout << "******************************************************* time " << i << endl;
+		showB();
 		for( int j=0; j<10; j++){
 			metabolism();
 		}
-		cout << "******************************************************* time " << i << endl;
-		showA();
 		/*if( nb == 0){
 			break;
 		}*/

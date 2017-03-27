@@ -39,7 +39,7 @@ int CellB::isA(){
  */
 float CellB::metabolism(float b_out){
 	phen_[1]=phen_[1]*(1-0.1*Rbc_)+b_out*Rbb_*0.1;
-	phen_[2]=phen_[2]+0.1*phen_[2]*Rbc_;
+	phen_[2]=phen_[2]+0.1*phen_[1]*Rbc_;
 	return b_out*(1-0.1*Rbb_);
 }
 

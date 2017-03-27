@@ -45,6 +45,7 @@ Case::Case(vector <float> organites, char c){
  * returns organites present in the case
  */
 vector <float> Case::organites(){
+	
 	return organites_;
 }
 
@@ -124,7 +125,7 @@ int Case::containsA(){
 
 /**
  * Randomly kills the cell in the case
- * returns 0 if no cell was killed, 1 if a cellA was killed, and B if a cellB was killed
+ * returns 0 if no cell was killed, 1 if a cellA was killed, and 2 if a cellB was killed
  */
 int Case::death(){
 	int dead = 0;
@@ -139,12 +140,16 @@ int Case::death(){
 		float random = static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
 		vector <float> conc = cell_->phen();
 		if(random<=cell_->P_death_){
-			//cout << "moooooooooooooooooooooooooooooooooooooooooooooort de " << c << endl;
 			dead = 1;
+			//cout << "mort" << endl;
 			for (int i=0; i<3; i++){
+				//cout << "case avant : " << organites_[i] << " ";
 				//intracellular organites spread in the case
 				organites_[i]+=conc[i];
+				//cout << "organites repandus : " << conc[i] << " ";
+				//cout << "case apres : " << organites_[i] << " " << endl;
 			}
+			//cout << endl;
 			cell_= nullptr;
 		}
 	}
