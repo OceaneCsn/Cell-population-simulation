@@ -20,7 +20,7 @@ public:
 //==============================
 
 Environnement();
-Environnement(float Ainit,int T,float D);
+Environnement(float Ainit,int T,float D,float P_mut);
    
 //==============================
 //    GETTERS
@@ -42,7 +42,8 @@ Case get_case(int i, int j);
  void competition();
  int run(int t);
  int state();
- int run_diagram(int t);
+ float Bpercentage();
+ float run_diagram(int t);
 
 protected:
 

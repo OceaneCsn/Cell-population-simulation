@@ -20,9 +20,9 @@ using namespace std;
 
 #define couleur(param) printf("\033[%sm",param)
 
-void Rdiagram(int Tmin, int Tmax, float Amin, float Amax, int Pt, float Pa);
-void diagram(int Tmin, int Tmax, int Amin, int Amax, int Pt, int Pa);
-void simple_run(int t, int A, int T, float D);
+void Rdiagram(int Tmin, int Tmax, float Amin, float Amax, int Pt, float Pa, float Pmut);
+void diagram(int Tmin, int Tmax, int Amin, int Amax, int Pt, int Pa, float Pmut);
+void simple_run(int t, int A, int T, float D, float Pmut);
 
 //obliges de faire 10000?
 //conditions d'approximation de l'etat?
@@ -36,8 +36,16 @@ void simple_run(int t, int A, int T, float D);
 int main(int argc, char const *argv[])
 {   
 	//simple_run(1000, 15 , 1, 0.1);
-	Rdiagram(1,801,0,50,50,2);
-	system("Rscript Plot_heatmap.R Rdiagram.txt out.pdf");
+	float Pmut = 0.1;
+	Rdiagram(1,801,0,50,400,25,Pmut);
+	if(Pmut == 0){
+		cout << "coucou" << endl;
+		system("Rscript Plot_heatmap_p0.R Rdiagram.txt out.pdf");
+		cout << " coucou2 " << endl;
+	}
+	else{
+		system("Rscript Plot_heatmap_p.R Rdiagram.txt out.pdf");
+	}
 	
   return 0;
 }
@@ -49,43 +57,13 @@ int main(int argc, char const *argv[])
  * Display a simulation with values of Ainit, T and D passed in parameters, that lasts the time t
  * We can see the time evolution of the grid, with the genotypes A in blue, and B in red.
  */
-void simple_run(int t, float A, int T, float D){
-	Environnement env = Environnement(A,T,D);
+void simple_run(int t, float A, int T, float D,float Pmut){
+	Environnement env = Environnement(A,T,D,Pmut);
 	env.run(t);
 }
 
-/*void RdiagramOptimized(int Amin, int Amax, int Tmin, int Tmax){
-	ofstream file("RdiagramOptimized.txt", ios::out | ios::trunc);
-	if(file){  
-		file << "Ainit " << "T " << "val" << endl;
-		int nb_it = (Tmax-Tmin+Pt)/Pt*(Amax-Amin+Pa)/Pa;
-		int cpt = 0;
-		for(int T=Tmin; T<=Tmax; T+=Pt){
-			for (int A=Amin; A<=Amax; A+=Pa){
-				cpt++;
-				cout << " Simulation " << cpt << " sur " << nb_it << ", Ainit = " << A << " et T = " << T;
-				Environnement env = Environnement(A,T,0.1);
-				int result = env.run_diagram(1000);
-				file << A << " " << T << " " << result << endl;
-				if (result==0){
-					cout << ":		Extinction" << endl;
-				}
-				else if (result==1){
-					cout << ":		Selection" << endl;
-				}
-				else{
-					cout << ":		Cohabitation" << endl;
-				}
-			}
-		}
-		file.close();
-	}
-	else{
-		cerr << "Opening error !" << endl;
-	}
-}*/
-
-void Rdiagram(int Tmin, int Tmax, float Amin, float Amax, int Pt, float Pa){
+void Rdiagram(int Tmin, int Tmax, float Amin, float Amax, int Pt, float Pa,float Pmut){
+	
 	ofstream file("Rdiagram.txt", ios::out | ios::trunc);
 	if(file){  
 		file << "Ainit " << "T " << "val" << endl;
@@ -96,10 +74,11 @@ void Rdiagram(int Tmin, int Tmax, float Amin, float Amax, int Pt, float Pa){
 				cpt++;
 				cout << " Simulation " << cpt << " sur " << nb_it << ", Ainit = " << A << " et T = " << T;
 				
-				Environnement env = Environnement(A,T,0.1);
-				int result = env.run_diagram(1000);
+				Environnement env = Environnement(A,T,0.1,Pmut);
+				
+				float result = env.run_diagram(500);
 				file << A << " " << T << " " << result << endl;
-				//A = A+Pa;
+				//cout << " nb " << result;
 				if (result==0){
 					cout << ":		Extinction" << endl;
 				}
@@ -114,9 +93,11 @@ void Rdiagram(int Tmin, int Tmax, float Amin, float Amax, int Pt, float Pa){
 		file.close();
 		
 	}
+	
 	else{
 		cerr << "File opening error !" << endl;
 	}
+	cout << "fin" << endl;
 }
 	
 /**
@@ -125,7 +106,7 @@ void Rdiagram(int Tmin, int Tmax, float Amin, float Amax, int Pt, float Pa){
  * The output is an array wich axis (displayed in white) are the values taken by Ainit and T for the different runs.
  * This array is filled with the number of different genotypes (0,1 or 2) living after a simulation time (1000) 
  */
-void diagram(int Tmin, int Tmax, int Amin, int Amax, int Pt, int Pa){
+void diagram(int Tmin, int Tmax, int Amin, int Amax, int Pt, int Pa,float Pmut){
 	int** diagram;
 	//creation of the array, with an additionnal dimension to store the diagram axis
 	diagram  = new int* [(Tmax-Tmin)/Pt+2];
@@ -148,7 +129,7 @@ void diagram(int Tmin, int Tmax, int Amin, int Amax, int Pt, int Pa){
 		for (int A=Amin; A<=Amax; A+=Pa){
 			cpt++;
 			cout << " Simulation " << cpt << " sur " << nb_it << ", Ainit = " << A << " et T = " << T;
-			Environnement env = Environnement(A,T,0.1);
+			Environnement env = Environnement(A,T,0.1,Pmut);
 			diagram[(Tmax-T)/Pt][(A-Amin)/Pa+1]=env.run_diagram(1000);
 			if (diagram[(Tmax-T)/Pt][(A-Amin)/Pa+1]==0){
 				cout << ":		Extinction" << endl;

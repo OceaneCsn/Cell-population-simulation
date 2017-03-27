@@ -40,13 +40,13 @@ Environnement::Environnement(){
 /**
  * Constructor with parameters
  */
-Environnement::Environnement(float Ainit,int T,float D){
+Environnement::Environnement(float Ainit,int T,float D, float P_mut){
 	Ainit_ = Ainit;
 	W_ = 32; 
 	H_ = 32; 
 	T_ = T;
 	D_ = D;
-	P_mut_=0.001;
+	P_mut_=P_mut;
 	grille  = new Case* [H_];
 	for(int i=0; i<H_;i++){
 		grille[i] = new Case[W_];
@@ -182,7 +182,7 @@ int Environnement::show(){
 int Environnement::state(){
 	
 	//avec approximations
-	if(cB+cA < H_*W_/300){
+	/*if(cB+cA < H_*W_/300){
 		return 0;
 	}
 
@@ -198,17 +198,27 @@ int Environnement::state(){
 	if(cB ==0){
 		return 1;
 	}
-	return 2;
+	return 2;*/
 	
 	//sans approximation
 	
-	/*if(cB == 0 and cA ==0){
+	if(cB == 0 and cA ==0){
 		return 0;
 	}
 	if(cA == 0 or cB == 0){
 		return 1;
 	}		
-	return 2;*/
+	return 2;
+}
+
+float Environnement::Bpercentage(){
+	if(cB == 0 and cA ==0){
+		return 0;
+	}
+	else{
+		//cout << "ratio " << (float)(cB)/(float)(cA+cB) << " cB " << cB << " cA " << cA << endl;
+		return 1.0+(float)(cB)/(float)(cA+cB);
+	}
 }
 
 /**
@@ -448,8 +458,8 @@ int Environnement::run(int t){
  * similar as run, but does not display the grid for faster execution,
  * as it will be called repeatedly in the main function diagram
  */
-int Environnement::run_diagram(int t){
-	int nb = 0;
+float Environnement::run_diagram(int t){
+	float nb = 0;
 	for (int i=0; i<t; i++){
 		if(i%(T_) == 0){
 			reset();
@@ -460,17 +470,24 @@ int Environnement::run_diagram(int t){
 		for( int j=0; j<10; j++){
 			metabolism();
 		}
-		nb = state();
+		if(P_mut_==0){
+			nb = state();
+		}
+		else{
+			nb = Bpercentage();
+			//cout << "nb env " << nb << endl;
+		}
 		//stops the run if the final state won't change anymore
 		//(in case of extinction, or selection with no possible exctinction to come)
-		if( nb == 0 || nb == 1 /*and Ainit_ >=3 and T_ <=350))*/){
+		if( nb == 0){
 			break;
 		}
 	}
 	cout << "cA : " << cA << " cB : " << cB << endl;
 	return nb;
 }
-	
+
+
 
 	
 	
