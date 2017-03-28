@@ -42,8 +42,8 @@ Environnement::Environnement(){
  */
 Environnement::Environnement(float Ainit,int T,float D, float P_mut){
 	Ainit_ = Ainit;
-	W_ = 5; 
-	H_ = 5; 
+	W_ = 32; 
+	H_ = 32; 
 	T_ = T;
 	D_ = D;
 	P_mut_=P_mut;
@@ -214,7 +214,7 @@ int Environnement::state(){
 	}
 	return 2;*/
 	
-	if(cB+cA < H_*W_/300){
+	/*if(cB+cA < H_*W_/300){
 		return 0;
 	}
 
@@ -227,20 +227,29 @@ int Environnement::state(){
 	if(cB==0 and cA < 30){
 		return 0;
 	}
+	if(cA==0 and cB <30){
+		return 0;
+	}
 	if(cB ==0){
 		return 1;
 	}
-	return 2; 
+	return 2; */
 	
 	//sans approximation
 	
-	/*if(cB == 0 and cA ==0){
+	if(cB == 0 and cA ==0){
 		return 0;
 	}
 	if(cA == 0 or cB == 0){
 		return 1;
 	}		
-	return 2;*/
+	if(cB<cA*0.005 and cB!=0){
+		return 1;
+	}
+	if(cA<cB*0.005 and cA!=0){
+		return 1;
+	}
+	return 2;
 }
 
 float Environnement::Bpercentage(){
@@ -284,12 +293,15 @@ float Environnement::Bpercentage(){
  */
 void Environnement::showA(){
 	cout << "Concentration in glucose of the grid" << endl;
+	float total = 0.0;
 	for (int i=0; i<H_; i++){
 		for(int j=0; j<W_; j++){
 			cout << grille[i][j].organites()[0] << " ";
+			total+=grille[i][j].organites()[0];
 		}
 		cout << endl;
 	}
+	cout << "Glucose total : " << total << endl;
 }
 
 /**
@@ -300,6 +312,19 @@ void Environnement::showB(){
 	for (int i=0; i<H_; i++){
 		for(int j=0; j<W_; j++){
 			cout << grille[i][j].organites()[1] << " ";
+		}
+		cout << endl;
+	}
+}
+
+/**
+ * Shows the concentrations of C organite in each case of the grid
+ */
+void Environnement::showC(){
+	cout << "Concentration in Acetate of the grid" << endl;
+	for (int i=0; i<H_; i++){
+		for(int j=0; j<W_; j++){
+			cout << grille[i][j].organites()[2] << " ";
 		}
 		cout << endl;
 	}
@@ -341,11 +366,30 @@ void Environnement::metabolism(){
  * computes the diffusion of the organites through the grid
  */
 void Environnement::diffusion(){
+	Case** grille_t;
+	grille_t  = new Case* [H_];
+	for(int i=0; i<H_;i++){
+		grille_t[i] = new Case[W_];
+	}
+	for (int i=0; i<H_; i++){
+		for(int j=0; j<W_; j++){
+			grille_t[i][j].set_organites(grille[i][j].organites());
+		}
+	}
+	
+	//showA();
+	//cout << grille_t[1][1].organites()[0] << endl;
 	//grid browse
 	for (int i=0; i<H_; i++){
 		for(int j=0; j<W_; j++){
+			
+			//cout << " ####### diffusion sur case " << i << " " << j << endl;
+			
+	/*for (int i=1; i<4; i++){
+		for(int j=1; j<4; j++){*/
 			//vector of organites at time t
-			vector <float> oldvec = grille[i][j].organites();
+			vector <float> oldvec = grille_t[i][j].organites();
+			vector <float> newvec = grille_t[i][j].organites();
 			//browsing neighbourhood
 			for (int k=-1; k<2; k++){
 				for(int l=-1; l<2; l++){
@@ -370,28 +414,37 @@ void Environnement::diffusion(){
 					else{
 						h=j+l;
 					}
+					//cout << "Prends depuis la case " << v << " " << h << endl;
 					//acquiring organites from neighbouring cells in a new vector 
-					vector <float> newvec = grille[i][j].organites();
+					
 					if(k==0 && l==0){
 						for(int m=0; m<3; m++){
 							newvec[m] = newvec[m] + D_*oldvec[m];
 						}
 					}
 					else{
+						//cout << "Ajout de A : " << D_*(grille_t[v][h].organites()[0]) << endl;
+						//cout << "avant : " << newvec[0] << endl;
 						for(int m=0; m<3; m++){
-							newvec[m] = newvec[m] + D_*(grille[v][h].organites()[m]);
+							
+							newvec[m] = newvec[m] + D_*(grille_t[v][h].organites()[m]);
 						}
 					}
-					grille[i][j].set_organites(newvec);
+					//cout << "apres : " << newvec[0] << endl;
+					//grille[i][j].set_organites(newvec);
 				}
 			}
+			//cout << " grille_t : " << grille_t[i][j].organites()[0] <<endl;
 			//losing organites to neighbouring cells
-			vector <float> newvec2 = grille[i][j].organites();
+			//cout << "Je me retranche : " << 9*D_*oldvec[0] << endl;
+			//vector <float> newvec2 = grille[i][j].organites();
 			for(int m=0; m<3; m++){
-				newvec2[m] = newvec2[m] - 9*D_*oldvec[m];
+				newvec[m] = newvec[m] - 9*D_*oldvec[m];
 			}
 			//final vector at time t+1
-			grille[i][j].set_organites(newvec2);
+			//cout << " grille_t : " << grille_t[i][j].organites()[0] <<endl;
+			grille[i][j].set_organites(newvec);
+			//cout << " grille_t : " << grille_t[i][j].organites()[0] <<endl;
 		}
 	}
 }
@@ -495,22 +548,20 @@ int Environnement::run(int t){
 	int nb = 0;
 	for (int i=0; i<t; i++){
 		if(i%(T_) == 0){
-			cout << i << " " << T_ << endl;
 			reset();
-			cout << "lavage!" << endl;
 		}
 		diffusion();
 		death();
 		competition();
 		
 		cout << "******************************************************* time " << i << endl;
-		showB();
+		nb = show();
 		for( int j=0; j<10; j++){
 			metabolism();
 		}
-		/*if( nb == 0){
+		if( nb == 0){
 			break;
-		}*/
+		}
 	}
 	return nb;
 }
@@ -538,7 +589,7 @@ float Environnement::run_diagram(int t){
 		cpt++;
 		//stops the run if the final state won't change anymore
 		//(in case of extinction, or selection with no possible exctinction to come)
-		if( nb == 0 or (nb ==1 and Ainit_>0 and T_<400)){
+		if( nb == 0/* or (nb ==1 and Ainit_>0 and T_<400)*/){
 			break;
 		}
 	}

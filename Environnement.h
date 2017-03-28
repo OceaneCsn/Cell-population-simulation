@@ -21,6 +21,7 @@ public:
 
 Environnement();
 Environnement(float Ainit,int T,float D,float P_mut);
+Environnement(float D);
    
 //==============================
 //    GETTERS
@@ -36,6 +37,7 @@ Case get_case(int i, int j);
  int show();
  void showA();
  void showB();
+ void showC();
  void death();
  void metabolism();
  void diffusion();
