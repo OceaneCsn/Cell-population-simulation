@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <vector>
+#include <fstream>
 
 #define couleur(param) printf("\033[%sm",param)
 
@@ -414,7 +415,6 @@ void Environnement::diffusion(){
 					else{
 						h=j+l;
 					}
-					//cout << "Prends depuis la case " << v << " " << h << endl;
 					//acquiring organites from neighbouring cells in a new vector 
 					
 					if(k==0 && l==0){
@@ -423,28 +423,19 @@ void Environnement::diffusion(){
 						}
 					}
 					else{
-						//cout << "Ajout de A : " << D_*(grille_t[v][h].organites()[0]) << endl;
-						//cout << "avant : " << newvec[0] << endl;
 						for(int m=0; m<3; m++){
 							
 							newvec[m] = newvec[m] + D_*(grille_t[v][h].organites()[m]);
 						}
 					}
-					//cout << "apres : " << newvec[0] << endl;
-					//grille[i][j].set_organites(newvec);
 				}
 			}
-			//cout << " grille_t : " << grille_t[i][j].organites()[0] <<endl;
 			//losing organites to neighbouring cells
-			//cout << "Je me retranche : " << 9*D_*oldvec[0] << endl;
-			//vector <float> newvec2 = grille[i][j].organites();
 			for(int m=0; m<3; m++){
 				newvec[m] = newvec[m] - 9*D_*oldvec[m];
 			}
 			//final vector at time t+1
-			//cout << " grille_t : " << grille_t[i][j].organites()[0] <<endl;
 			grille[i][j].set_organites(newvec);
-			//cout << " grille_t : " << grille_t[i][j].organites()[0] <<endl;
 		}
 	}
 }
@@ -461,7 +452,7 @@ void Environnement::competition(){
 				int fitness_max = 0;
 				int v_max = 0;
 				int h_max=0;
-				//browsing neighbo	urhood
+				//browsing neighbourhood
 				for (int k=-1; k<2; k++){
 					for(int l=-1; l<2; l++){
 						if( k!=0 && l!=0 ) {
@@ -528,9 +519,9 @@ void Environnement::competition(){
 					else{
 						cB++;
 					}
-					/*if(random >= P_mut_){
+					if(random >= P_mut_){
 						grille[h_max][v_max].set_cell(c,phen);
-					}*/
+					}
 				}
 			}
 		}
@@ -544,25 +535,32 @@ void Environnement::competition(){
  * returns 0 in case of extinction, 1 in case of exclusion and 2 in case of cohabitation
  */
 int Environnement::run(int t){
-	show();
+	ofstream file("Chroniques.txt", ios::out | ios::trunc);
 	int nb = 0;
-	for (int i=0; i<t; i++){
-		if(i%(T_) == 0){
-			reset();
-		}
-		diffusion();
-		death();
-		competition();
+	if(file){  
+		file << "t " << "cA " << "cB" << endl;
+		show();
 		
-		cout << "******************************************************* time " << i << endl;
-		nb = show();
-		/*for( int j=0; j<10; j++){
+		for (int i=0; i<t; i++){
+			if(i%(T_) == 0){
+				reset();
+			}
+			diffusion();
+			death();
+			competition();
+			
+			cout << "******************************************************* time " << i << endl;
+			nb = show();
 			metabolism();
-		}*/
-		metabolism();
-		if( nb == 0){
-			break;
+			file << i << " " << cA << " " << cB << endl;
+			if( nb == 0){
+				break;
+			}
 		}
+		file.close();
+	}
+	else{
+		cerr << "File opening error !" << endl;
 	}
 	return nb;
 }

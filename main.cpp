@@ -35,16 +35,18 @@ void simple_run(int t, float A, int T, float D, float Pmut);
 int main(int argc, char const *argv[])
 {   
 	
-	simple_run(1000, 50 , 1000, 0.1,0.001);
-	/*float Pmut = 0.00;
-	Rdiagram(1,1501,0,50,250,10,Pmut);
+	simple_run(1000, 8 , 200, 0.1,0.001);
+	system("Rscript Chroniques.R Chroniques.txt Chroniques.jpeg");
+	/*float Pmut = 0.001;
+	Rdiagram(1,1501,0,50,500,25,Pmut);
 	if(Pmut == 0){
 		system("Rscript Plot_heatmap_p0.R Rdiagram.txt out.pdf");
 	}
 	else{
 		system("Rscript Plot_heatmap_p.R Rdiagram.txt out.pdf");
-	}
-	*/
+	}*/
+	//system("Rscript Plot_heatmap_p0.R Rdiagram.txt out.pdf");
+	//system("Rscript Plot_heatmap_p.R Rdiagram.txt out.pdf");
     return 0;
 }
 
@@ -72,11 +74,10 @@ void Rdiagram(int Tmin, int Tmax, float Amin, float Amax, int Pt, float Pa,float
 				cpt++;
 				cout << " Simulation " << cpt << " sur " << nb_it << ", Ainit = " << A << " et T = " << T;
 				
-				Environnement env = Environnement(A,T,0.25,Pmut);
+				Environnement env = Environnement(A,T,0.1,Pmut);
 				
-				float result = env.run_diagram(1000);
+				float result = env.run_diagram(100);
 				file << A << " " << T << " " << result << endl;
-				//cout << " nb " << result;
 				if (result==0){
 					cout << ":		Extinction" << endl;
 				}
@@ -95,7 +96,6 @@ void Rdiagram(int Tmin, int Tmax, float Amin, float Amax, int Pt, float Pa,float
 	else{
 		cerr << "File opening error !" << endl;
 	}
-	cout << "fin" << endl;
 }
 	
 /**
