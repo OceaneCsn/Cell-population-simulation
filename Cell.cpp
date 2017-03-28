@@ -18,7 +18,7 @@ using namespace std;
  */
 Cell::Cell(){
 	P_death_=0.02;
-	W_min_=0.001;
+	W_min_=0.002;
 	phen_={0.0,0.0,0.0};
 }
 

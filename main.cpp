@@ -27,7 +27,6 @@ void simple_run(int t, float A, int T, float D, float Pmut);
 
 //diagramme de classes : 
 //cohabitation? Garder le pourcentage de B?
-//faire tourner avec la diffusion à 0.25 ou pour avoir une différence significative
 
 //==============================
 //    MAIN
@@ -36,19 +35,17 @@ void simple_run(int t, float A, int T, float D, float Pmut);
 int main(int argc, char const *argv[])
 {   
 	
-	//simple_run(1000, 50 , 1000, 0.1,0.0);
-	float Pmut = 0.001;
-	Rdiagram(1,600,0,50,200,10,Pmut);
+	simple_run(1000, 50 , 1000, 0.1,0.001);
+	/*float Pmut = 0.00;
+	Rdiagram(1,1501,0,50,250,10,Pmut);
 	if(Pmut == 0){
-		cout << "coucou" << endl;
 		system("Rscript Plot_heatmap_p0.R Rdiagram.txt out.pdf");
-		cout << " coucou2 " << endl;
 	}
 	else{
 		system("Rscript Plot_heatmap_p.R Rdiagram.txt out.pdf");
 	}
-	
-  return 0;
+	*/
+    return 0;
 }
 
 //==============================

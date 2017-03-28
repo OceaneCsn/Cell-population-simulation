@@ -528,9 +528,9 @@ void Environnement::competition(){
 					else{
 						cB++;
 					}
-					if(random >= P_mut_){
+					/*if(random >= P_mut_){
 						grille[h_max][v_max].set_cell(c,phen);
-					}
+					}*/
 				}
 			}
 		}
@@ -556,9 +556,10 @@ int Environnement::run(int t){
 		
 		cout << "******************************************************* time " << i << endl;
 		nb = show();
-		for( int j=0; j<10; j++){
+		/*for( int j=0; j<10; j++){
 			metabolism();
-		}
+		}*/
+		metabolism();
 		if( nb == 0){
 			break;
 		}
@@ -580,10 +581,10 @@ float Environnement::run_diagram(int t){
 		diffusion();
 		death();
 		competition();
-		for( int j=0; j<10; j++){
+		/*for( int j=0; j<10; j++){
 			metabolism();
-		}
-		
+		}*/
+		metabolism();
 		nb = state();
 		
 		cpt++;
