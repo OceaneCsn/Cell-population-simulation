@@ -23,7 +23,7 @@ pdf(args[2])
 # legend("topright", leg=c("Ext","Cohab", "Exclu"), col=c("yellow", "royalblue", "firebrick"), pch=15)
 
 obj <- ggplot(data =  data, aes(x = Ainit, y = T)) + 
-  geom_tile(aes(fill = val)) 
+  geom_tile(aes(fill = val)) + scale_fill_gradient(name = "System state")
 
 print(obj)
 dev.off()

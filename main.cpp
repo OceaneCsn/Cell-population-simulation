@@ -35,18 +35,19 @@ void simple_run(int t, float A, int T, float D, float Pmut);
 int main(int argc, char const *argv[])
 {   
 	
-	simple_run(1000, 8 , 200, 0.1,0.001);
-	system("Rscript Chroniques.R Chroniques.txt Chroniques.jpeg");
-	/*float Pmut = 0.001;
-	Rdiagram(1,1501,0,50,500,25,Pmut);
-	if(Pmut == 0){
+	/*simple_run(10000, 45 , 1200, 0,0.001);
+	system("Rscript Chroniques.R Chroniques.txt Chroniques.jpeg");*/
+	
+	float Pmut = 0.001;
+	Rdiagram(400,900,0,50,20,2,Pmut);
+	/*if(Pmut == 0){
 		system("Rscript Plot_heatmap_p0.R Rdiagram.txt out.pdf");
 	}
 	else{
 		system("Rscript Plot_heatmap_p.R Rdiagram.txt out.pdf");
-	}*/
-	//system("Rscript Plot_heatmap_p0.R Rdiagram.txt out.pdf");
-	//system("Rscript Plot_heatmap_p.R Rdiagram.txt out.pdf");
+	}
+	//system("Rscript Plot_heatmap_p0.R Rdiagram.txt out.pdf");*/
+	system("Rscript Plot_heatmap_p.R Rdiagram.txt out.pdf");
     return 0;
 }
 
@@ -76,7 +77,7 @@ void Rdiagram(int Tmin, int Tmax, float Amin, float Amax, int Pt, float Pa,float
 				
 				Environnement env = Environnement(A,T,0.1,Pmut);
 				
-				float result = env.run_diagram(100);
+				float result = env.run_diagram(1000);
 				file << A << " " << T << " " << result << endl;
 				if (result==0){
 					cout << ":		Extinction" << endl;

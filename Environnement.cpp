@@ -255,23 +255,23 @@ int Environnement::state(){
 
 float Environnement::Bpercentage(){
 	
-	if(cB+cA < H_*W_/300){
+	if(cB+cA < H_*W_/200){
 		return 0;
 	}
 
-	if(cB<cA*0.01 and cB!=0){
+	/*if(cB<cA*0.01 and cB!=0){
 		return 1;
 	}
 	if(cA<cB/1000 and cA!=0){
 		return 1;
-	}
-	if(cB==0 and cA < 30){
+	}*/
+	/*if(cB==0 and cA < 30){
 		return 0;
-	}
-	if(cB ==0){
+	}*/
+	/*if(cB ==0){
 		return 1;
-	}
-	return 2; 
+	}*/
+	return 1+(float)(cB)/(float)(cA+cB); 
 	
 	/*if(cB == 0 and cA ==0){
 		return 0;
@@ -377,17 +377,9 @@ void Environnement::diffusion(){
 			grille_t[i][j].set_organites(grille[i][j].organites());
 		}
 	}
-	
-	//showA();
-	//cout << grille_t[1][1].organites()[0] << endl;
 	//grid browse
 	for (int i=0; i<H_; i++){
 		for(int j=0; j<W_; j++){
-			
-			//cout << " ####### diffusion sur case " << i << " " << j << endl;
-			
-	/*for (int i=1; i<4; i++){
-		for(int j=1; j<4; j++){*/
 			//vector of organites at time t
 			vector <float> oldvec = grille_t[i][j].organites();
 			vector <float> newvec = grille_t[i][j].organites();
@@ -438,6 +430,10 @@ void Environnement::diffusion(){
 			grille[i][j].set_organites(newvec);
 		}
 	}
+	for(int i=0; i<H_;i++){
+		delete[] grille_t[i];
+	}
+	delete[] grille_t;
 }
 
 /**
@@ -551,9 +547,11 @@ int Environnement::run(int t){
 			
 			cout << "******************************************************* time " << i << endl;
 			nb = show();
-			metabolism();
+			for( int j=0; j<4; j++){
+				metabolism();
+			}
 			file << i << " " << cA << " " << cB << endl;
-			if( nb == 0){
+			if( nb == 0 /*or nb<=1+P_mut_*/){
 				break;
 			}
 		}
@@ -579,20 +577,24 @@ float Environnement::run_diagram(int t){
 		diffusion();
 		death();
 		competition();
-		/*for( int j=0; j<10; j++){
+		for( int j=0; j<4; j++){
 			metabolism();
-		}*/
-		metabolism();
-		nb = state();
+		}
+		
+		nb = Bpercentage();
 		
 		cpt++;
 		//stops the run if the final state won't change anymore
 		//(in case of extinction, or selection with no possible exctinction to come)
-		if( nb == 0/* or (nb ==1 and Ainit_>0 and T_<400)*/){
+		if( nb == 0 or nb<=1+P_mut_ /*and cA>=H_*W_/50)*/){
 			break;
 		}
 	}
-	cout << "cA : " << cA << " cB : " << cB << " temps " << cpt << endl;
+	cout << "cA : " << cA << " cB : " << cB << " temps " << cpt << " B ratio " << nb << endl;
+	if((nb==1 or nb ==2) and cA+cB<H_*W_/100){
+	//if it should have been an extinction if lasted more
+		nb = 0;
+	}
 	return nb;
 }
 
