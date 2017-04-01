@@ -22,6 +22,13 @@ public:
 Environnement();
 Environnement(float Ainit,int T,float D,float P_mut);
 Environnement(float D);
+
+	
+//==============================
+//    DESTRUCTOR
+//==============================
+
+~Environnement();
    
 //==============================
 //    GETTERS

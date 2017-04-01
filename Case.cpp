@@ -93,7 +93,7 @@ void Case::set_cell(char c, vector <float> conc){
 
 Case::~Case(){
 	if(cell_!= nullptr){
-		//delete cell_;
+		delete cell_;
 	}
 }
 

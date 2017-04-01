@@ -74,11 +74,23 @@ Environnement::Environnement(float D){
 }
 
 //==============================
+//    DESTRUCTOR
+//==============================
+
+Environnement::~Environnement(){
+	for(int i=0; i<H_;i++){
+		if(grille[i]!=nullptr){
+			delete[] grille[i];
+		}
+	}
+	delete[] grille;
+}
+//==============================
 //    GETTERS
 //==============================
 
 /**
- * grid getter
+ * Element of the grid getter
  */
 Case Environnement::get_case(int i, int j){
 	return grille[i][j];
@@ -242,12 +254,6 @@ int Environnement::state(){
 		return 0;
 	}
 	if(cA == 0 or cB == 0){
-		return 1;
-	}		
-	if(cB<cA*0.005 and cB!=0){
-		return 1;
-	}
-	if(cA<cB*0.005 and cA!=0){
 		return 1;
 	}
 	return 2;
@@ -581,16 +587,17 @@ float Environnement::run_diagram(int t){
 			metabolism();
 		}
 		
-		nb = Bpercentage();
+		nb = state();
+		//nb = Bpercentage();
 		
 		cpt++;
 		//stops the run if the final state won't change anymore
 		//(in case of extinction, or selection with no possible exctinction to come)
-		if( nb == 0 or nb<=1+P_mut_ /*and cA>=H_*W_/50)*/){
+		if( nb == 0 /*or /*(nb<=1+P_mut_ and cA+cB>=H_*W_/2)*/){
 			break;
 		}
 	}
-	cout << "cA : " << cA << " cB : " << cB << " temps " << cpt << " B ratio " << nb << endl;
+	cout << " cA : " << cA << " cB : " << cB << " time : " << cpt << " B ratio : " << nb << endl;
 	if((nb==1 or nb ==2) and cA+cB<H_*W_/100){
 	//if it should have been an extinction if lasted more
 		nb = 0;

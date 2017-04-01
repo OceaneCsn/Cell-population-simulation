@@ -20,13 +20,17 @@ using namespace std;
 
 #define couleur(param) printf("\033[%sm",param)
 
-void Rdiagram(int Tmin, int Tmax, float Amin, float Amax, int Pt, float Pa, float Pmut);
+void Rdiagram(int Tmin, int Tmax, float Amin, float Amax, int Pt, float Pa, float Pmut, float D);
 void diagram(int Tmin, int Tmax, int Amin, int Amax, int Pt, int Pa, float Pmut);
 void simple_run(int t, float A, int T, float D, float Pmut);
 
 
-//diagramme de classes : 
-//cohabitation? Garder le pourcentage de B?
+//diagramme de classes : destructeur case et env , attributs env cA et cB
+//faire discret pour pmut et pas pumt, faire joli simul pour tout
+//faire varier diffusion
+//enlever affichage temps
+//mettre meme conditions limites partout et virer les autres
+//convlu latex
 
 //==============================
 //    MAIN
@@ -34,20 +38,15 @@ void simple_run(int t, float A, int T, float D, float Pmut);
 
 int main(int argc, char const *argv[])
 {   
-	
-	/*simple_run(10000, 45 , 1200, 0,0.001);
+	float Pmut = 0;
+	float D = 0.1;
+	/*simple_run(10000, 45 , 1200, D,0.001);
 	system("Rscript Chroniques.R Chroniques.txt Chroniques.jpeg");*/
 	
-	float Pmut = 0.001;
-	Rdiagram(400,900,0,50,20,2,Pmut);
-	/*if(Pmut == 0){
-		system("Rscript Plot_heatmap_p0.R Rdiagram.txt out.pdf");
-	}
-	else{
-		system("Rscript Plot_heatmap_p.R Rdiagram.txt out.pdf");
-	}
-	//system("Rscript Plot_heatmap_p0.R Rdiagram.txt out.pdf");*/
-	system("Rscript Plot_heatmap_p.R Rdiagram.txt out.pdf");
+	
+	Rdiagram(1,1201,0,50,200,5,Pmut,D);
+	system("Rscript Plot_heatmap_p0.R Rdiagram.txt out.pdf");
+	//system("Rscript Plot_heatmap_p.R Rdiagram.txt out.pdf");
     return 0;
 }
 
@@ -63,37 +62,41 @@ void simple_run(int t, float A, int T, float D,float Pmut){
 	env.run(t);
 }
 
-void Rdiagram(int Tmin, int Tmax, float Amin, float Amax, int Pt, float Pa,float Pmut){
-	
+/**
+ * Computes the final state of the simulations for each Ainit and T and write them in a file 
+ * Parameters are the extremal values of the diagram axis, and the step for each one.
+ * Mutation probability and diffusion constant are also asked
+ */
+void Rdiagram(int Tmin, int Tmax, float Amin, float Amax, int Pt, float Pa,float Pmut, float D){
 	ofstream file("Rdiagram.txt", ios::out | ios::trunc);
 	if(file){  
+		int cpt = 0;
 		file << "Ainit " << "T " << "val" << endl;
 		int nb_it = (Tmax-Tmin+Pt)/Pt*(Amax-Amin+Pa)/Pa;
-		int cpt = 0;
 		for(int T=Tmin; T<=Tmax; T+=Pt){
 			for (float A=Amin; A<=Amax; A+=Pa){
 				cpt++;
-				cout << " Simulation " << cpt << " sur " << nb_it << ", Ainit = " << A << " et T = " << T;
-				
-				Environnement env = Environnement(A,T,0.1,Pmut);
-				
-				float result = env.run_diagram(1000);
+				cout << " Simulation " << cpt << " / " << nb_it << ", Ainit = " << A << " T = " << T;				
+				Environnement env = Environnement(A,T,D,Pmut);
+				float result = env.run_diagram(2000);
 				file << A << " " << T << " " << result << endl;
 				if (result==0){
-					cout << ":		Extinction" << endl;
+					couleur("30");
+					printf("			Extinction \n");
 				}
 				else if (result==1){
-					cout << ":		Selection" << endl;
+					couleur("31");
+					printf("			Selection \n");
 				}
 				else{
-					cout << ":		Cohabitation" << endl;
+					couleur("32");
+					printf("			Cohabitation \n");
 				}
+				couleur("0");
 			}
 		}
-		file.close();
-		
-	}
-	
+		file.close();		
+	}	
 	else{
 		cerr << "File opening error !" << endl;
 	}
