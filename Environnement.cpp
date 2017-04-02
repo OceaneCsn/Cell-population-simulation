@@ -207,49 +207,6 @@ int Environnement::show(){
  * returns 0 in case of extinction, 1 in case of exclusion and 2 in case of cohabitation
  **/
 int Environnement::state(){
-	
-	//avec approximations
-	/*if(cB+cA < H_*W_/300){
-		return 0;
-	}
-
-	if(cB<cA*P_mut_ and cB!=0){
-		return 1;
-	}
-	if(cA<cB/300 and cA!=0){
-		return 1;
-	}
-	if(cB==0 and cA < 30){
-		return 0;
-	}
-	if(cB ==0){
-		return 1;
-	}
-	return 2;*/
-	
-	/*if(cB+cA < H_*W_/300){
-		return 0;
-	}
-
-	if(cB<cA*0.01 and cB!=0){
-		return 1;
-	}
-	if(cA<cB/1000 and cA!=0){
-		return 1;
-	}
-	if(cB==0 and cA < 30){
-		return 0;
-	}
-	if(cA==0 and cB <30){
-		return 0;
-	}
-	if(cB ==0){
-		return 1;
-	}
-	return 2; */
-	
-	//sans approximation
-	
 	if(cB == 0 and cA ==0){
 		return 0;
 	}
@@ -259,40 +216,15 @@ int Environnement::state(){
 	return 2;
 }
 
+/**
+ * returns 0 in case of extinction, 1 + cB/(cA+cB) in case of exclusion or cohabitation
+ **/
 float Environnement::Bpercentage(){
 	
 	if(cB+cA < H_*W_/200){
 		return 0;
 	}
-
-	/*if(cB<cA*0.01 and cB!=0){
-		return 1;
-	}
-	if(cA<cB/1000 and cA!=0){
-		return 1;
-	}*/
-	/*if(cB==0 and cA < 30){
-		return 0;
-	}*/
-	/*if(cB ==0){
-		return 1;
-	}*/
 	return 1+(float)(cB)/(float)(cA+cB); 
-	
-	/*if(cB == 0 and cA ==0){
-		return 0;
-	}
-	if(cB+cA<50){
-		return 0;
-	}
-	else{
-		float res = (float)(cB)/(float)(cA+cB);
-		if(res<0.01 and cA+cB>100){
-			return 1;
-		}
-		//cout << "ratio " << (float)(cB)/(float)(cA+cB) << " cB " << cB << " cA " << cA << endl;
-		return 1.0+(float)(cB)/(float)(cA+cB);
-	}*/
 }
 
 /**
@@ -373,6 +305,7 @@ void Environnement::metabolism(){
  * computes the diffusion of the organites through the grid
  */
 void Environnement::diffusion(){
+	//creation of the grid at time t
 	Case** grille_t;
 	grille_t  = new Case* [H_];
 	for(int i=0; i<H_;i++){
@@ -428,7 +361,7 @@ void Environnement::diffusion(){
 					}
 				}
 			}
-			//losing organites to neighbouring cells
+			//sharing organites with neighbouring cells
 			for(int m=0; m<3; m++){
 				newvec[m] = newvec[m] - 9*D_*oldvec[m];
 			}
@@ -436,6 +369,7 @@ void Environnement::diffusion(){
 			grille[i][j].set_organites(newvec);
 		}
 	}
+	//to avoid huge memory leaks :D
 	for(int i=0; i<H_;i++){
 		delete[] grille_t[i];
 	}
@@ -521,6 +455,7 @@ void Environnement::competition(){
 					else{
 						cB++;
 					}
+					//changes also the mother cell, that mutated too.
 					if(random >= P_mut_){
 						grille[h_max][v_max].set_cell(c,phen);
 					}
@@ -557,7 +492,7 @@ int Environnement::run(int t){
 				metabolism();
 			}
 			file << i << " " << cA << " " << cB << endl;
-			if( nb == 0 /*or nb<=1+P_mut_*/){
+			if(nb == 0){
 				break;
 			}
 		}
@@ -586,18 +521,16 @@ float Environnement::run_diagram(int t){
 		for( int j=0; j<4; j++){
 			metabolism();
 		}
-		
-		nb = state();
-		//nb = Bpercentage();
+		nb = Bpercentage();
 		
 		cpt++;
 		//stops the run if the final state won't change anymore
 		//(in case of extinction, or selection with no possible exctinction to come)
-		if( nb == 0 /*or /*(nb<=1+P_mut_ and cA+cB>=H_*W_/2)*/){
+		if(nb == 0 or (cB==0 and P_mut_==0)){
 			break;
 		}
 	}
-	cout << " cA : " << cA << " cB : " << cB << " time : " << cpt << " B ratio : " << nb << endl;
+	cout << " cA : " << cA << ", cB : " << cB << ", final time : " << cpt << ", B ratio : " << nb << endl;
 	if((nb==1 or nb ==2) and cA+cB<H_*W_/100){
 	//if it should have been an extinction if lasted more
 		nb = 0;

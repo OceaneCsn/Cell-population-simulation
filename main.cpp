@@ -26,11 +26,6 @@ void simple_run(int t, float A, int T, float D, float Pmut);
 
 
 //diagramme de classes : destructeur case et env , attributs env cA et cB
-//faire discret pour pmut et pas pumt, faire joli simul pour tout
-//faire varier diffusion
-//enlever affichage temps
-//mettre meme conditions limites partout et virer les autres
-//convlu latex
 
 //==============================
 //    MAIN
@@ -38,15 +33,65 @@ void simple_run(int t, float A, int T, float D, float Pmut);
 
 int main(int argc, char const *argv[])
 {   
-	float Pmut = 0;
+	start :
+	cout << "Vous vous apretez a simuler le developpement cellulaire de deux lignees en situation de crossfeeging." << endl;
+	cout << "Pour effectuer une simulation avec des valeurs données pour Ainit et T, tapez 1." << endl;
+	cout << "Pour obtenir un diagramme de phase du systeme, tapez 2." << endl;
+	int n;
+	cin >> n;
 	float D = 0.1;
-	/*simple_run(10000, 45 , 1200, D,0.001);
-	system("Rscript Chroniques.R Chroniques.txt Chroniques.jpeg");*/
-	
-	
-	Rdiagram(1,1201,0,50,200,5,Pmut,D);
-	system("Rscript Plot_heatmap_p0.R Rdiagram.txt out.pdf");
-	//system("Rscript Plot_heatmap_p.R Rdiagram.txt out.pdf");
+	if(n==1){
+		float Ainit, Pmut;
+		int T, t;
+		cout << "Veuillez rentrer les valeurs suivantes : Ainit (glucose de depart, compris entre 0 et 50)" << endl;
+		cin >> Ainit;
+		cout << "T (frequence des lavages, comprise entre 1 et 1500) :" << endl;
+		cin >> T;
+		cout << "Temps de simulation : " << endl;
+		cin >> t;
+		cout << "Probabilite de mutation" << endl;
+		cin >> Pmut;
+		cout << "C'est parti!" << endl;
+		
+		simple_run(t, Ainit , T, D, Pmut);
+		system("Rscript Chroniques.R Chroniques.txt Chroniques.jpeg");
+		
+		cout << "Fin de la simulation. Visualisez les courbes de population des 2 genotypes dans le fichier Chroniques.jpeg." << endl;
+	}
+	else if(n==2){
+		float Amin, Amax, iA, Pmut;
+		int Tmin, Tmax, iT;
+		cout << "Veuillez rentrer les valeurs suivantes, pour definir les axes du diaramme : Amin (>=0)" << endl;
+		cin >> Amin;
+		cout << "Amax (<=50) :" << endl;
+		cin >> Amax;
+		cout << "Increment pour Ainit : " << endl;
+		cin >> iA;
+		cout << "Tmin (>= 1): " << endl;
+		cin >> Tmin;
+		cout << "Tmax (<= 1500): " << endl;
+		cin >> Tmax;
+		cout << "Increment pour T : " << endl;
+		cin >> iT;
+		cout << "Probabilite de mutation" << endl;
+		cin >> Pmut;
+		cout << "C'est parti!" << endl;
+		
+		Rdiagram(Tmin,Tmax,Amin,Amax,iT,iA,Pmut,D);
+		system("Rscript Plot_heatmap_p.R Rdiagram.txt Diagramme.pdf");
+		
+		cout << "Fin de la simulation. Visualisez le diagramme dans le fichier Diagramme.pdf." << endl;
+	}
+	else{
+		cout << "Vous devez taper 1 ou 2 " << endl;
+	}
+	int again;
+	cout << "Relancer le programme? Tapez 3. Sinon, n'importe quoi d'autre." << endl;
+	cin >> again;
+	if(again == 3){
+		goto start;
+	}
+	cout << "Bye!" << endl;
     return 0;
 }
 
@@ -54,7 +99,7 @@ int main(int argc, char const *argv[])
 //    FUNCTIONS
 //==============================
 /**
- * Display a simulation with values of Ainit, T and D passed in parameters, that lasts the time t
+ * Displays a simulation with values of Ainit, T and D passed in parameters, that lasts the time t
  * We can see the time evolution of the grid, with the genotypes A in blue, and B in red.
  */
 void simple_run(int t, float A, int T, float D,float Pmut){
@@ -78,7 +123,7 @@ void Rdiagram(int Tmin, int Tmax, float Amin, float Amax, int Pt, float Pa,float
 				cpt++;
 				cout << " Simulation " << cpt << " / " << nb_it << ", Ainit = " << A << " T = " << T;				
 				Environnement env = Environnement(A,T,D,Pmut);
-				float result = env.run_diagram(2000);
+				float result = env.run_diagram(1000);
 				file << A << " " << T << " " << result << endl;
 				if (result==0){
 					couleur("30");
@@ -107,6 +152,7 @@ void Rdiagram(int Tmin, int Tmax, float Amin, float Amax, int Pt, float Pa,float
  * in those 2 dimensions.
  * The output is an array wich axis (displayed in white) are the values taken by Ainit and T for the different runs.
  * This array is filled with the number of different genotypes (0,1 or 2) living after a simulation time (1000) 
+ * BUT YOU DONT WANT TO USE IT, RDIAGRAM IS MUCH BETTER
  */
 void diagram(int Tmin, int Tmax, int Amin, int Amax, int Pt, int Pa,float Pmut){
 	int** diagram;
@@ -183,6 +229,9 @@ void diagram(int Tmin, int Tmax, int Amin, int Amax, int Pt, int Pa,float Pmut){
 			}
 		}
 		cout << endl;
+	}
+	for (int i = 0; i <(Tmax-Tmin)/Pt+2); i++){
+		delete[] diagram[i];
 	}
 	delete[] diagram;	
 }
