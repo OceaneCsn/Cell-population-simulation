@@ -24,9 +24,6 @@ void Rdiagram(int Tmin, int Tmax, float Amin, float Amax, int Pt, float Pa, floa
 void diagram(int Tmin, int Tmax, int Amin, int Amax, int Pt, int Pa, float Pmut);
 void simple_run(int t, float A, int T, float D, float Pmut);
 
-
-//diagramme de classes : destructeur case et env , attributs env cA et cB
-
 //==============================
 //    MAIN
 //==============================
@@ -230,10 +227,7 @@ void diagram(int Tmin, int Tmax, int Amin, int Amax, int Pt, int Pa,float Pmut){
 		}
 		cout << endl;
 	}
-	for (int i = 0; i <(Tmax-Tmin)/Pt+2); i++){
-		delete[] diagram[i];
-	}
-	delete[] diagram;	
+	delete[] diagram;
 }
 
 

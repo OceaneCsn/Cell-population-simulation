@@ -21,8 +21,6 @@ public:
 
 Environnement();
 Environnement(float Ainit,int T,float D,float P_mut);
-Environnement(float D);
-
 	
 //==============================
 //    DESTRUCTOR
@@ -39,20 +37,20 @@ Case get_case(int i, int j);
 //==============================
 //    PUBLIC METHODS
 //==============================
- void reset();
- void filling();
- int show();
- void showA();
- void showB();
- void showC();
- void death();
- void metabolism();
- void diffusion();
- void competition();
- int run(int t);
- int state();
- float Bpercentage();
- float run_diagram(int t);
+void reset();
+void filling();
+int show();
+void showA();
+void showB();
+void showC();
+void death();
+void metabolism();
+void diffusion();
+void competition();
+int run(int t);
+int state();
+float Bpercentage();
+float run_diagram(int t);
 
 protected:
 
@@ -65,10 +63,10 @@ int W_; //width
 int H_; //height
 int T_ ; //frequence of grid cleaning
 float D_; //diffusion
-float P_mut_;
-Case** grille;
-int cA;
-int cB;
+float P_mut_; //mutation probability
+Case** grille; //grid containing cells and organites
+int cA; //current number of living A cells
+int cB; //current number of living B cells
 };
 
 #endif // ENVIRONNEMENT_H

@@ -59,20 +59,6 @@ Environnement::Environnement(float Ainit,int T,float D, float P_mut){
 
 }
 
-Environnement::Environnement(float D){
-	Ainit_ = 10;
-	W_ = 5; 
-	H_ = 5; 
-	T_ = 200;
-	D_ = D;
-	P_mut_=0;
-	grille  = new Case* [H_];
-	for(int i=0; i<H_;i++){
-		grille[i] = new Case[W_];
-	}
-	grille[2][2].reset(10);
-}
-
 //==============================
 //    DESTRUCTOR
 //==============================
@@ -159,21 +145,17 @@ void Environnement::filling(){
  * also evaluates the state of the population, and return the number of different living genotypes
  */
 int Environnement::show(){
-	int cptA = 0;
-	int cptB = 0;
 	for (int i=0; i<H_; i++){
 		for(int j=0; j<W_; j++){
 			if(grille[i][j].containsA() == 1){
 				couleur("34");
 				printf("a ");
 				couleur("0");
-				cptA++;
 			}
 			else if(grille[i][j].containsA() == 0){
 				couleur("31");
 				printf("b ");
 				couleur("0");
-				cptB++;
 			}
 			else{
 				cout << "  ";
@@ -181,8 +163,8 @@ int Environnement::show(){
 		}
 		cout << endl;
 	}
-	if(cptB==0){
-		if(cptA==0){
+	if(cB==0){
+		if(cA==0){
 			cout << "Extinction" << endl;
 			return 0;
 		}
@@ -192,7 +174,7 @@ int Environnement::show(){
 		}
 	}
 	else{
-		if(cptA==0){
+		if(cA==0){
 			cout << "Selection" << endl;
 			return 1;
 		}
@@ -488,7 +470,7 @@ int Environnement::run(int t){
 			
 			cout << "******************************************************* time " << i << endl;
 			nb = show();
-			for( int j=0; j<4; j++){
+			for( int j=0; j<10; j++){
 				metabolism();
 			}
 			file << i << " " << cA << " " << cB << endl;
@@ -518,7 +500,7 @@ float Environnement::run_diagram(int t){
 		diffusion();
 		death();
 		competition();
-		for( int j=0; j<4; j++){
+		for( int j=0; j<10; j++){
 			metabolism();
 		}
 		nb = Bpercentage();
