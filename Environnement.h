@@ -51,7 +51,6 @@ int run(int t);
 int state();
 float Bpercentage();
 float run_diagram(int t);
-
 protected:
 
 //==============================

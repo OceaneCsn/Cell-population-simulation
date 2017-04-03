@@ -455,8 +455,12 @@ void Environnement::competition(){
  */
 int Environnement::run(int t){
 	ofstream file("Chroniques.txt", ios::out | ios::trunc);
+	ofstream file2("Fitness.txt", ios::out | ios::trunc);
 	int nb = 0;
+	int sumA;
+	int sumB;
 	if(file){  
+		file2 << "t " << "meanA " << "meanB" << endl; 
 		file << "t " << "cA " << "cB" << endl;
 		show();
 		
@@ -464,6 +468,22 @@ int Environnement::run(int t){
 			if(i%(T_) == 0){
 				reset();
 			}
+			
+			sumA = 0;
+			sumB = 0;
+			for (int i=0; i<H_; i++){
+				for(int j=0; j<W_; j++){
+					if(grille[i][j].isEmpty()!=1){
+						if(grille[i][j].containsA()==1){
+							sumA += grille[i][j].fitness();
+						}
+						else{
+							sumB += grille[i][j].fitness();
+						}
+					}
+				}
+			}
+			file2 << i << " " << sumA/cA << " " << sumB/cB << endl;
 			diffusion();
 			death();
 			competition();
@@ -479,6 +499,7 @@ int Environnement::run(int t){
 			}
 		}
 		file.close();
+		file2.close();
 	}
 	else{
 		cerr << "File opening error !" << endl;
@@ -497,6 +518,10 @@ float Environnement::run_diagram(int t){
 		if(i%(T_) == 0){
 			reset();
 		}
+		
+
+		
+		
 		diffusion();
 		death();
 		competition();
